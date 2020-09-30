@@ -271,18 +271,22 @@ Private Sub Test_DctDiffers()
     Dim vbc  As VBComponent
     
     BoP ErrSrc(PROC)
+    Set dct1 = Nothing
+    Set dct2 = Nothing
     For Each vbc In ThisWorkbook.VBProject.VBComponents
-        DctAdd dct:=dct1, addkey:=vbc, additem:=vbc.Name, seq:=seq_ascending ' by key case sensitive is the default
+        DctAdd dct:=dct1, addkey:=vbc, additem:=vbc, seq:=seq_ascending ' by key case sensitive is the default
     Next vbc
     For Each vbc In ThisWorkbook.VBProject.VBComponents
-        DctAdd dct:=dct2, addkey:=vbc, additem:=vbc.Name, seq:=seq_ascending ' by key case sensitive is the default
+        DctAdd dct:=dct2, addkey:=vbc, additem:=vbc, seq:=seq_ascending ' by key case sensitive is the default
     Next vbc
-    Set vbc = ThisWorkbook.VBProject.VBComponents("mTest")
     
     '~~ Test: Differs in keys
     Debug.Assert Not DctDiffers(dct1, dct2)
-    dct1.Remove vbc
+    dct1.Remove ThisWorkbook.VBProject.VBComponents("mTest")
+    dct2.Remove ThisWorkbook.VBProject.VBComponents("mBasic")
     Debug.Assert DctDiffers(dct1, dct2)
+    Set dct1 = Nothing
+    Set dct2 = Nothing
     EoP ErrSrc(PROC)
     
 End Sub

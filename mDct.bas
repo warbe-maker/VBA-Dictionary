@@ -329,32 +329,60 @@ Private Function DctAddOrderValue(ByVal dctkey As Variant, _
 
 End Function
 
-Public Function DctDiffers(ByVal dct1 As Dictionary, _
-                           ByVal dct2 As Dictionary) As Boolean
-' --------------------------------------------------------------
-' Returns TRUE when array (a1) differs from array (a2).
-' --------------------------------------------------------------
+Public Function DctDiffers( _
+                ByVal dct1 As Dictionary, _
+                ByVal dct2 As Dictionary, _
+       Optional ByVal diffitems As Boolean = True, _
+       Optional ByVal diffkeys As Boolean = True) As Boolean
+' ----------------------------------------------------------
+' Returns TRUE when Dictionary 1 (dct1) is different from
+' Dictionary 2 (dct2). diffitems and diffkeys may be False
+' when only either of the two differences matters.
+' When both are false only a differns in the number of
+' entries constitutes a difference.
+' ----------------------------------------------------------
 Const PROC  As String = "DictDiffers"
 Dim i       As Long
 Dim v       As Variant
 
     On Error GoTo on_error
-    If dct1.Count = dct2.Count Then
-        For Each v In dct1
-            DctDiffers = Not dct2.Exists(v)
-            If DctDiffers Then GoTo exit_proc
     
-            If VarType(dct1.Item(v)) = vbObject Then
-                DctDiffers = Not dct1.Item(v) Is dct2.Items(i)
+    '~~ Difference in entries
+    DctDiffers = dct1.Count <> dct2.Count
+    If DctDiffers Then GoTo exit_proc
+    
+    If diffitems Then
+        '~~ Difference in items
+        For i = 0 To dct1.Count - 1
+            If VarType(dct1.Items()(i)) = vbObject And VarType(dct1.Items()(i)) = vbObject Then
+                DctDiffers = Not dct1.Items()(i) Is dct2.Items()(i)
                 If DctDiffers Then GoTo exit_proc
-            Else
-                DctDiffers = dct1.Item(v) <> dct2.Items(i)
-                If DctDiffers Then GoTo exit_proc
+            ElseIf (VarType(dct1.Items()(i)) = vbObject And VarType(dct1.Items()(i)) <> vbObject) _
+                Or (VarType(dct1.Items()(i)) <> vbObject And VarType(dct1.Items()(i)) = vbObject) Then
+                DctDiffers = True
+                GoTo exit_proc
+            ElseIf dct1.Items()(i) <> dct2.Items()(i) Then
+                DctDiffers = True
+                GoTo exit_proc
             End If
-            i = i + 1
-        Next v
-    Else
-        DctDiffers = True
+        Next i
+    End If
+    
+    If diffkeys Then
+        '~~ Difference in keys
+        For i = 0 To dct1.Count - 1
+            If VarType(dct1.Keys()(i)) = vbObject And VarType(dct1.Keys()(i)) = vbObject Then
+                DctDiffers = Not dct1.Keys()(i) Is dct2.Keys()(i)
+                If DctDiffers Then GoTo exit_proc
+            ElseIf (VarType(dct1.Keys()(i)) = vbObject And VarType(dct1.Keys()(i)) <> vbObject) _
+                Or (VarType(dct1.Keys()(i)) <> vbObject And VarType(dct1.Keys()(i)) = vbObject) Then
+                DctDiffers = True
+                GoTo exit_proc
+            ElseIf dct1.Keys()(i) <> dct2.Keys()(i) Then
+                DctDiffers = True
+                GoTo exit_proc
+            End If
+        Next i
     End If
        
 exit_proc:

@@ -48,7 +48,7 @@ Option Explicit
 '       immediately with the procedure the error occours. When the call stack is
 '       maintained, the error message will display the call path to the error beginning
 '       with the first (entry) procedure in which the call stack is maintained all the
-'       call seq down to the procedure where the error occoured.
+'       call sequence down to the procedure where the error occoured.
 '
 ' Uses: fMsg (only when the Conditional Compile Argument AlternateMsgBox = 1)
 '
@@ -372,7 +372,7 @@ Private Function ErrMsgErrType( _
    End If
    
 End Function
+
 Private Function ErrSrc(ByVal sProc As String) As String
     ErrSrc = ThisWorkbook.Name & ">mErrHndlr" & ">" & sProc
 End Function
-
