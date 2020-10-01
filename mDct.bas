@@ -17,15 +17,17 @@ Option Explicit
 '
 ' W. Rauschenberger, Berlin Sept 2020
 ' ----------------------------------------------------------------------------
-Private bSeqAscending       As Boolean
-Private bSeqDescending      As Boolean
-Private bOrderByItem        As Boolean
-Private bOrderByKey         As Boolean
-Private bCaseSensitive      As Boolean
-Private bCaseIgnored        As Boolean
-Private bSeqEntry           As Boolean
-Private bSeqAfterTarget     As Boolean
-Private bSeqBeforeTarget    As Boolean
+Private bAddedAfter     As Boolean
+Private bAddedBefore    As Boolean
+Private bCaseIgnored    As Boolean
+Private bCaseSensitive  As Boolean
+Private bEntrySequence  As Boolean
+Private bOrderByItem    As Boolean
+Private bOrderByKey     As Boolean
+Private bSeqAfterTrgt   As Boolean
+Private bSeqAscending   As Boolean
+Private bSeqBeforeTrgt  As Boolean
+Private bSeqDescending  As Boolean
 
 Public Enum enDctAddOptions ' Dictionary add/insert modes
     sense_caseignored
@@ -44,18 +46,18 @@ Private Function AppErr(ByVal lNo As Long) As Long
 End Function
 
 Public Sub DctAdd(ByRef dct As Dictionary, _
-                  ByVal addkey As Variant, _
-                  ByVal additem As Variant, _
+                  ByVal key As Variant, _
+                  ByVal item As Variant, _
          Optional ByVal order As enDctAddOptions = order_bykey, _
          Optional ByVal seq As enDctAddOptions = seq_entry, _
          Optional ByVal sense As enDctAddOptions = sense_casesensitive, _
          Optional ByVal target As Variant, _
-         Optional ByVal keepduplicates As Boolean = True)
+         Optional ByVal staywithfirst As Boolean = False)
 ' ----------------------------------------------------------------------------
-' Adds the item (additem) to the Dictionary (dct) with the key (addkey).
+' Adds the item (item) to the Dictionary (dct) with the key (key).
 ' Supports various key sequences, case and case insensitive key as well
 ' as adding items before or after an existing item.
-' - When the key (addkey) already exists the item is updated when it is
+' - When the key (key) already exists the item is updated when it is
 '   numeric or a string, else it is ignored.
 ' - When the dictionary (dct) is Nothing it is setup on the fly.
 ' - When dctmode = before or after target is obligatory and an
@@ -67,16 +69,14 @@ Public Sub DctAdd(ByRef dct As Dictionary, _
 ' W. Rauschenberger, Berlin Oct 2020
 ' ----------------------------------------------------------------------------
     Const PROC = "DctAdd"
-    Dim dctTemp             As Dictionary
-    Dim vEntryKey           As Variant
-    Dim vEntryItem          As Variant
-    Dim vValueEntryNew      As Variant ' the argument key's/item's value
-    Dim vValueEntryExisting As Variant ' the entry's key/item value for the comparison with the vValueEntryNew
-    Dim vValueEntryTarget   As Variant ' the add before/after key/item's value
-    Dim bDone               As Boolean
-    Dim bAddedBefore        As Boolean
-    Dim bAddedAfter         As Boolean
-    Dim vItem               As Variant
+    Dim bDone           As Boolean
+    Dim dctTemp         As Dictionary
+    Dim vItem           As Variant
+    Dim vItemExisting   As Variant
+    Dim vKeyExisting    As Variant
+    Dim vValueExisting  As Variant ' the entry's key/item value for the comparison with the vValueNew
+    Dim vValueNew       As Variant ' the argument key's/item's value
+    Dim vValueTarget    As Variant ' the add before/after key/item's value
     
     On Error GoTo on_error
     
@@ -90,11 +90,11 @@ Public Sub DctAdd(ByRef dct As Dictionary, _
     End Select
     
     Select Case seq
-        Case seq_ascending:     bSeqAscending = True:   bSeqDescending = False: bSeqEntry = False:  bSeqAfterTarget = False:    bSeqBeforeTarget = False
-        Case seq_descending:    bSeqAscending = False:  bSeqDescending = True:  bSeqEntry = False:  bSeqAfterTarget = False:    bSeqBeforeTarget = False
-        Case seq_entry:         bSeqAscending = False:  bSeqDescending = False: bSeqEntry = True:   bSeqAfterTarget = False:    bSeqBeforeTarget = False
-        Case seq_aftertarget:   bSeqAscending = False:  bSeqDescending = False: bSeqEntry = False:  bSeqAfterTarget = True:     bSeqBeforeTarget = False
-        Case seq_beforetarget:  bSeqAscending = False:  bSeqDescending = False: bSeqEntry = False:  bSeqAfterTarget = False:    bSeqBeforeTarget = True
+        Case seq_ascending:    bSeqAscending = True:  bSeqDescending = False: bEntrySequence = False: bSeqAfterTrgt = False: bSeqBeforeTrgt = False
+        Case seq_descending:   bSeqAscending = False: bSeqDescending = True:  bEntrySequence = False: bSeqAfterTrgt = False: bSeqBeforeTrgt = False
+        Case seq_entry:        bSeqAscending = False: bSeqDescending = False: bEntrySequence = True:  bSeqAfterTrgt = False: bSeqBeforeTrgt = False
+        Case seq_aftertarget:  bSeqAscending = False: bSeqDescending = False: bEntrySequence = False: bSeqAfterTrgt = True:  bSeqBeforeTrgt = False
+        Case seq_beforetarget: bSeqAscending = False: bSeqDescending = False: bEntrySequence = False: bSeqAfterTrgt = False: bSeqBeforeTrgt = True
         Case Else: Err.Raise AppErr(2), ErrSrc(PROC), "Vaue for argument seq neither ascending, descendingy, after, before!"
     End Select
     
@@ -104,65 +104,70 @@ Public Sub DctAdd(ByRef dct As Dictionary, _
         Case Else: Err.Raise AppErr(3), ErrSrc(PROC), "Vaue for argument sense neither case sensitive nor case ignored!"
     End Select
     
-    If bOrderByKey And (bSeqBeforeTarget Or bSeqAfterTarget) And dct.Exists(addkey) _
-    Then Err.Raise AppErr(1), ErrSrc(PROC), "The to be added key (order value = '" & DctAddOrderValue(addkey, additem) & "') for an add before/after already exists!"
+    If bOrderByKey And (bSeqBeforeTrgt Or bSeqAfterTrgt) And dct.Exists(key) _
+    Then Err.Raise AppErr(4), ErrSrc(PROC), "The to be added key (order value = '" & DctAddOrderValue(key, item) & "') for an add before/after already exists!"
 
     '~~ When no target is specified for add before/after seq descending/ascending is used instead
     If IsMissing(target) Then
-        If bSeqBeforeTarget Then seq = seq_descending
-        If bSeqBeforeTarget Then seq = seq_ascending
+        If bSeqBeforeTrgt Then seq = seq_descending
+        If bSeqBeforeTrgt Then seq = seq_ascending
     Else
         '~~ When a target is specified it must exist
-        If (bSeqAfterTarget Or bSeqBeforeTarget) And bOrderByKey Then
+        If (bSeqAfterTrgt Or bSeqBeforeTrgt) And bOrderByKey Then
             If Not dct.Exists(target) _
-            Then Err.Raise mBasic.AppErr(2), ErrSrc(PROC), "The target key for an add before/after key does not exists!"
-        ElseIf (bSeqAfterTarget Or bSeqBeforeTarget) And bOrderByItem Then
+            Then Err.Raise mBasic.AppErr(5), ErrSrc(PROC), "The target key for an add before/after key does not exists!"
+        ElseIf (bSeqAfterTrgt Or bSeqBeforeTrgt) And bOrderByItem Then
             If Not DctAddItemExists(dct, target) _
-            Then Err.Raise AppErr(2), ErrSrc(PROC), "The target itemfor an add before/after item does not exists!"
+            Then Err.Raise AppErr(6), ErrSrc(PROC), "The target itemfor an add before/after item does not exists!"
         End If
-        vValueEntryTarget = DctAddOrderValue(target, target)
+        vValueTarget = DctAddOrderValue(target, target)
     End If
         
     With dct
-        '~~ When it is the very first item or the order option is entry seq the item will just be added
-        If .Count = 0 Or bSeqEntry Then ' the very first item is just added
-            .Add addkey, additem
+        '~~ When it is the very first item or the order option
+        '~~ is entry sequence the item will just be added
+        If .Count = 0 Or bEntrySequence Then
+            .Add key, item
             GoTo end_proc
         End If
         
-        If bOrderByKey And .Exists(addkey) Then
-            
-            '~~ When the order is by key and the key already exists the item is updated
-            If VarType(additem) = vbObject _
-            Then Set .Item(addkey) = additem _
-            Else .Item(addkey) = additem
-            GoTo end_proc
+        '~~ When the order is by key and not stay with first entry added
+        '~~ and the key already exists the item is updated
+        If bOrderByKey And Not staywithfirst Then
+            If .Exists(key) Then
+                If VarType(item) = vbObject Then Set .item(key) = item Else .item(key) = item
+                GoTo end_proc
+            End If
         End If
     End With
         
     '~~ When the order argument is an object but does not have a name property raise an error
     If bOrderByKey Then
-        If VarType(addkey) = vbObject Then
+        If VarType(key) = vbObject Then
             On Error Resume Next
+            key.Name = key.Name
             If Err.Number <> 0 _
-            Then Err.Raise AppErr(3), ErrSrc(PROC), "The order option is by key, the key is an object but does not have a name property!"
+            Then Err.Raise AppErr(7), ErrSrc(PROC), "The order option is by key, the key is an object but does not have a name property!"
         End If
-    Else ' order mode is by item
-        On Error Resume Next
-        If Err.Number <> 0 _
-        Then Err.Raise AppErr(4), ErrSrc(PROC), "The order option is by item, the item is an object but does not have a name property!"
+    ElseIf bOrderByItem Then
+        If VarType(item) = vbObject Then
+            On Error Resume Next
+            item.Name = item.Name
+            If Err.Number <> 0 _
+            Then Err.Raise AppErr(8), ErrSrc(PROC), "The order option is by item, the item is an object but does not have a name property!"
+        End If
     End If
     
-    vValueEntryNew = DctAddOrderValue(addkey, additem)
+    vValueNew = DctAddOrderValue(key, item)
     
     With dct
         '~~ Get the last entry's order value
-        vValueEntryExisting = DctAddOrderValue(.Keys()(.Count - 1), .Items()(.Count - 1))
+        vValueExisting = DctAddOrderValue(.Keys()(.Count - 1), .Items()(.Count - 1))
         
         '~~ When the order mode is ascending and the last entry's key or item
         '~~ is less than the order argument just add it and exit
-        If bSeqAscending And vValueEntryNew > vValueEntryExisting Then
-            .Add addkey, additem
+        If bSeqAscending And vValueNew > vValueExisting Then
+            .Add key, item
             GoTo end_proc
         End If
     End With
@@ -171,53 +176,55 @@ Public Sub DctAdd(ByRef dct As Dictionary, _
     '~~ be inserted before or after the key/item as specified.
     Set dctTemp = New Dictionary
     bDone = False
-    For Each vEntryKey In dct
+    
+    For Each vKeyExisting In dct
         
-        If IsObject(dct.Item(vEntryKey)) _
-        Then Set vEntryItem = dct.Item(vEntryKey) _
-        Else vEntryItem = dct.Item(vEntryKey)
+        If IsObject(dct.item(vKeyExisting)) _
+        Then Set vItemExisting = dct.item(vKeyExisting) _
+        Else vItemExisting = dct.item(vKeyExisting)
         
         With dctTemp
             If bDone Then
                 '~~ All remaining items just transfer
-                .Add vEntryKey, vEntryItem
+                .Add vKeyExisting, vItemExisting
             Else
-                vValueEntryExisting = DctAddOrderValue(vEntryKey, vEntryItem)
+                vValueExisting = DctAddOrderValue(vKeyExisting, vItemExisting)
             
-                If vValueEntryExisting = vValueEntryTarget And bSeqBeforeTarget Then
-                    '~~ The add before target key/item has been reached
-                    .Add addkey, additem
-                    .Add vEntryKey, vEntryItem
-                    bDone = True ' Add done
-                    bAddedBefore = True
-                ElseIf vValueEntryExisting = vValueEntryTarget And bSeqAfterTarget Then
-                    '~~ The add after target key/item has been reached
-                    .Add vEntryKey, vEntryItem
-                    .Add addkey, additem
-                    bDone = True
-                    bAddedAfter = True
-                ElseIf bSeqAscending And vValueEntryExisting > vValueEntryNew Then
-                    .Add addkey, additem
-                    .Add vEntryKey, vEntryItem
-                    bDone = True ' Add done
-                ElseIf bSeqDescending And vValueEntryNew > vValueEntryExisting Then
+                If vValueExisting = vValueTarget Then
+                    If bSeqBeforeTrgt Then
+                        '~~ The add before target key/item has been reached
+                        .Add key, item:                     .Add vKeyExisting, vItemExisting:   bDone = True
+                        bAddedBefore = True
+                    ElseIf bSeqAfterTrgt Then
+                        '~~ The add after target key/item has been reached
+                        .Add vKeyExisting, vItemExisting:   .Add key, item:                     bDone = True
+                        bAddedAfter = True
+                    End If
+                ElseIf vValueExisting = vValueNew And bOrderByItem And (bSeqAscending Or bSeqDescending) And Not .Exists(key) Then
+                    If staywithfirst Then
+                        .Add vKeyExisting, vItemExisting:   bDone = True ' not added
+                    Else
+                        '~~ The item already exists. When the key doesn't exist and staywithfirst is False the item is added
+                        .Add vKeyExisting, vItemExisting:   .Add key, item:                     bDone = True
+                    End If
+                ElseIf bSeqAscending And vValueExisting > vValueNew Then
+                    .Add key, item:                     .Add vKeyExisting, vItemExisting:   bDone = True
+                ElseIf bSeqDescending And vValueNew > vValueExisting Then
                     '~~> Add before target key has been reached
-                    .Add addkey, additem
-                    .Add vEntryKey, vEntryItem
-                    bDone = True
+                    .Add key, item:                     .Add vKeyExisting, vItemExisting:   bDone = True
                 Else
-                    .Add vEntryKey, vEntryItem ' transfer item
+                    .Add vKeyExisting, vItemExisting ' transfer existing item, wait for the one which fits within sequence
                 End If
             End If
         End With ' dctTemp
-    Next vEntryKey
+    Next vKeyExisting
     
     '~~ Return the temporary dictionary with the new item added and all exiting items in dct transfered to it
     '~~ provided ther was not a add before/after error
-    If bSeqBeforeTarget And Not bAddedBefore _
-    Then Err.Raise AppErr(5), ErrSrc(PROC), "The key/item couldn't be added before because the target key/item did not exist!"
-    If bSeqAfterTarget And Not bAddedAfter _
-    Then Err.Raise AppErr(6), ErrSrc(PROC), "The key/item couldn't be added before because the target key/item did not exist!"
+    If bSeqBeforeTrgt And Not bAddedBefore _
+    Then Err.Raise AppErr(9), ErrSrc(PROC), "The key/item couldn't be added before because the target key/item did not exist!"
+    If bSeqAfterTrgt And Not bAddedAfter _
+    Then Err.Raise AppErr(10), ErrSrc(PROC), "The key/item couldn't be added before because the target key/item did not exist!"
     
     Set dct = dctTemp
     Set dctTemp = Nothing
@@ -403,13 +410,13 @@ Private Function DctAddItemExists( _
     DctAddItemExists = False
     
     For Each v In dct
-        If VarType(dct.Item(v)) = vbObject Then
-            If dct.Item(v) Is dctitem Then
+        If VarType(dct.item(v)) = vbObject Then
+            If dct.item(v) Is dctitem Then
                 DctAddItemExists = True
                 Exit Function
             End If
         Else
-            If dct.Item(v) = dctitem Then
+            If dct.item(v) = dctitem Then
                 DctAddItemExists = True
                 Exit Function
             End If
@@ -421,6 +428,4 @@ End Function
 Private Function ErrSrc(ByVal sProc As String) As String
     ErrSrc = ThisWorkbook.Name & " mDct." & sProc
 End Function
-
-
 
