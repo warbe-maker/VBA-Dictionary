@@ -11,9 +11,16 @@ Option Explicit
 '          https://Github.com/warbe-maker/VBA-Basic-Procedures
 '
 ' Methods:
-' Requires Reference to:
-' - "Microsoft Scripting Runtime"
-' - "Microsoft Visual Basic Application Extensibility .." (for test only!)
+' - DctAdd      Add a key/item pair into a given Dictionary instantly ordered
+' - DictDiff    Returns True when tow Dictionaries were different
+'
+' Uses:         No other modules
+'               Note: mErrHndlr, clsCallStack, clsCallStackItem are for the mTest
+'                     module only
+'
+' Requires:     "Microsoft Scripting Runtime"
+'               Note: The reference to "Microsoft Visual Basic Application Extensibility .."
+'               is for the mTest module only!
 '
 ' W. Rauschenberger, Berlin Sept 2020
 ' ----------------------------------------------------------------------------

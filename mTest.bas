@@ -45,7 +45,7 @@ Private Sub Test_DctAdd_12_AddDuplicate_Item()
     DctAdd dct:=dctTest, key:="DDDD", item:=30, order:=order_byitem, seq:=seq_ascending
     DctAdd dct:=dctTest, key:="EEEEE", item:=20, order:=order_byitem, seq:=seq_ascending
     DctAdd dct:=dctTest, key:="FFFFFF", item:=10, order:=order_byitem, seq:=seq_ascending
-    Test_DctAdd_DisplayResult dctTest, "staywithfirst=False"
+'    Test_DctAdd_DisplayResult dctTest, "staywithfirst=False"
     Debug.Assert dctTest.Count = 6
     
     Set dctTest = Nothing
@@ -55,7 +55,7 @@ Private Sub Test_DctAdd_12_AddDuplicate_Item()
     DctAdd dct:=dctTest, key:="DDDD", item:=30, order:=order_byitem, seq:=seq_ascending, staywithfirst:=True
     DctAdd dct:=dctTest, key:="EEEEE", item:=20, order:=order_byitem, seq:=seq_ascending, staywithfirst:=True
     DctAdd dct:=dctTest, key:="FFFFFF", item:=10, order:=order_byitem, seq:=seq_ascending, staywithfirst:=True
-    Test_DctAdd_DisplayResult dctTest, "staywithfirst=True"
+'    Test_DctAdd_DisplayResult dctTest, "staywithfirst=True"
     Debug.Assert dctTest.Count = 5
     
 End Sub
@@ -128,7 +128,7 @@ Private Sub Test_DctAdd_03_ItemIsObjectWithNameProperty()
         DctAdd dct:=dctTest, key:=vbc.Name, item:=vbc, order:=order_byitem, seq:=seq_ascending
     Next vbc
     Debug.Assert dctTest.Count = 9
-    Test_DctAdd_DisplayResult dctTest
+'    Test_DctAdd_DisplayResult dctTest
     Debug.Assert dctTest.Items()(0).Name = "clsCallStack"
     Debug.Assert dctTest.Items()(dctTest.Count - 1).Name = "wsDct"
     
