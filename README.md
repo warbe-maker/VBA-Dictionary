@@ -3,11 +3,13 @@
 Methods, useful when working with Dictionaries.
 
 ### Installation
-1. Download _mDct.bas_ and _mBasic.bas_ and import them into your VB-Project. In case you do not want to install the _mBasic_ module just copy all _ErrMsg* procedures into the _mDct_ module. Alternatively the [Github repo Common-VBA-Dictionary-Procedures](https://github.com/warbe-maker/Common-VBA-Dictionary-Procedures) may be cloned to have everything available at once.
+Download [_mDct.bas_](https://gitcdn.link/repo/warbe-maker/Common-VBA-Dictionary-Procedures/master/mDct.bas) and import it into your VB-Project. Alternatively you may fork the [Github repo Common-VBA-Dictionary-Procedures](https://github.com/warbe-maker/Common-VBA-Dictionary-Procedures).
 
 ### Usage
-
-- **_DctAdd_**: See blog-post [Add key/item pairs to a Dictionary "instantly ordered"](https://warbe-maker.github.io)
+#### Method DctAdd
+See blog-post [Add key/item pairs to a Dictionary "instantly ordered"](https://warbe-maker.github.io)
+#### Method DctDiff
+stil to be added here
 
 ### Contribution (Development, test, maintenance)
 - The module **_mDct_** is hosted in the dedicated _Common Component Workbook_ **_Dct.xlsm_** which is used as the development, test, and maintenance environment.
