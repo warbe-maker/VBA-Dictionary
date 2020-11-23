@@ -2,6 +2,15 @@ Attribute VB_Name = "mTest"
 Option Explicit
 Option Private Module
 
+Public Type tMsgSection                 ' ---------------------
+       sLabel As String                 ' Structure of the
+       sText As String                  ' UserForm's message
+       bMonspaced As Boolean            ' area which consists
+End Type                                ' of 4 message sections
+Public Type tMsg                        ' Attention: 4 is a
+       section(1 To 4) As tMsgSection   ' design constant!
+End Type                                ' ---------------------
+
 Private dctTest As Dictionary
 
 Private Function ErrSrc(ByVal sProc As String) As String
@@ -11,9 +20,9 @@ End Function
 Public Sub Test_DctAdd_00_Regression()
     
     Const PROC = "Test_DctAdd_Regression"
-    BoP ErrSrc(PROC)
+    mTrc.BoP ErrSrc(PROC)
     
-    Test_DctAdd_01_KeyIsValue
+    Test_DctAdd_01_Performance_KeyIsValue
     Test_DctAdd_02_KeyIsObjectWithNameProperty
     Test_DctAdd_03_ItemIsObjectWithNameProperty
     Test_DctAdd_04_InsertKeyBefore
@@ -21,12 +30,10 @@ Public Sub Test_DctAdd_00_Regression()
     Test_DctAdd_06_InsertItemBefore
     Test_DctAdd_07_InsertItemAfter
     Test_DctAdd_08_NumKey
-'    Test_DctAdd_09_StayWithFirst_Key
-'    Test_DctAdd_10_StayWithFirst_Item
-'    Test_DctAdd_11_UpdateFirst_Key
     Test_DctAdd_12_AddDuplicate_Item
+    Test_DctAdd_99_Performance
     
-    EoP ErrSrc(PROC)
+    mTrc.EoP ErrSrc(PROC)
 
 End Sub
 
@@ -39,49 +46,53 @@ Private Sub Test_DctAdd_12_AddDuplicate_Item()
     Const PROC = "Test_DctAdd_12_AddDuplicate_Item"
 
     Set dctTest = Nothing
-    DctAdd dct:=dctTest, key:="A", item:=60, order:=order_byitem, seq:=seq_ascending
-    DctAdd dct:=dctTest, key:="BB", item:=50, order:=order_byitem, seq:=seq_ascending
-    DctAdd dct:=dctTest, key:="CCC", item:=30, order:=order_byitem, seq:=seq_ascending
-    DctAdd dct:=dctTest, key:="DDDD", item:=30, order:=order_byitem, seq:=seq_ascending
-    DctAdd dct:=dctTest, key:="EEEEE", item:=20, order:=order_byitem, seq:=seq_ascending
-    DctAdd dct:=dctTest, key:="FFFFFF", item:=10, order:=order_byitem, seq:=seq_ascending
+    DctAdd add_dct:=dctTest, add_key:="A", add_item:=60, add_order:=order_byitem, add_seq:=seq_ascending
+    DctAdd add_dct:=dctTest, add_key:="BB", add_item:=50, add_order:=order_byitem, add_seq:=seq_ascending
+    DctAdd add_dct:=dctTest, add_key:="CCC", add_item:=30, add_order:=order_byitem, add_seq:=seq_ascending
+    DctAdd add_dct:=dctTest, add_key:="DDDD", add_item:=30, add_order:=order_byitem, add_seq:=seq_ascending
+    DctAdd add_dct:=dctTest, add_key:="EEEEE", add_item:=20, add_order:=order_byitem, add_seq:=seq_ascending
+    DctAdd add_dct:=dctTest, add_key:="FFFFFF", add_item:=10, add_order:=order_byitem, add_seq:=seq_ascending
 '    Test_DctAdd_DisplayResult dctTest, "staywithfirst=False"
     Debug.Assert dctTest.Count = 6
     
     Set dctTest = Nothing
-    DctAdd dct:=dctTest, key:="A", item:=60, order:=order_byitem, seq:=seq_ascending, staywithfirst:=True
-    DctAdd dct:=dctTest, key:="BB", item:=50, order:=order_byitem, seq:=seq_ascending, staywithfirst:=True
-    DctAdd dct:=dctTest, key:="CCC", item:=30, order:=order_byitem, seq:=seq_ascending, staywithfirst:=True
-    DctAdd dct:=dctTest, key:="DDDD", item:=30, order:=order_byitem, seq:=seq_ascending, staywithfirst:=True
-    DctAdd dct:=dctTest, key:="EEEEE", item:=20, order:=order_byitem, seq:=seq_ascending, staywithfirst:=True
-    DctAdd dct:=dctTest, key:="FFFFFF", item:=10, order:=order_byitem, seq:=seq_ascending, staywithfirst:=True
+    DctAdd add_dct:=dctTest, add_key:="A", add_item:=60, add_order:=order_byitem, add_seq:=seq_ascending, add_staywithfirst:=True
+    DctAdd add_dct:=dctTest, add_key:="BB", add_item:=50, add_order:=order_byitem, add_seq:=seq_ascending, add_staywithfirst:=True
+    DctAdd add_dct:=dctTest, add_key:="CCC", add_item:=30, add_order:=order_byitem, add_seq:=seq_ascending, add_staywithfirst:=True
+    DctAdd add_dct:=dctTest, add_key:="DDDD", add_item:=30, add_order:=order_byitem, add_seq:=seq_ascending, add_staywithfirst:=True
+    DctAdd add_dct:=dctTest, add_key:="EEEEE", add_item:=20, add_order:=order_byitem, add_seq:=seq_ascending, add_staywithfirst:=True
+    DctAdd add_dct:=dctTest, add_key:="FFFFFF", add_item:=10, add_order:=order_byitem, add_seq:=seq_ascending, add_staywithfirst:=True
 '    Test_DctAdd_DisplayResult dctTest, "staywithfirst=True"
     Debug.Assert dctTest.Count = 5
     
 End Sub
 
-Private Sub Test_DctAdd_01_KeyIsValue()
+Private Sub Test_DctAdd_01_Performance_KeyIsValue()
 ' -----------------------------------------------
 ' Note: Since a 100% reverse key order added in mode ascending
 ' is the worst case regarding performance this test sorts 100 items
 ' with 50% already in seq and the other 50% to be inserted.
 ' -----------------------------------------------
-    Const PROC = "Test_DctAdd_01_KeyIsValue"
-    Dim i   As Long
+    Const PROC = "Test_DctAdd_01_Performance_KeyIsValue"
+    Dim i       As Long
+    Dim j       As Long: j = 999
+    Dim jStep   As Long: jStep = 2
+    Dim k       As Long: k = 1000
+    Dim kStep   As Long: kStep = -2
     
-    BoP ErrSrc(PROC)
+    mTrc.BoP ErrSrc(PROC), "added items = ", k
     Set dctTest = Nothing
-    For i = 1 To 9 Step 2
-        DctAdd dct:=dctTest, key:=i, item:=ThisWorkbook, seq:=seq_ascending ' by key case sensitive is the default
+    For i = 1 To j Step jStep
+        DctAdd add_dct:=dctTest, add_key:=i, add_item:=ThisWorkbook, add_seq:=seq_ascending ' by key case sensitive is the default
     Next i
-    For i = 10 To 2 Step -2
-        DctAdd dct:=dctTest, key:=i, item:=ThisWorkbook, seq:=seq_ascending ' by key case sensitive is the default
+    For i = k To jStep Step kStep
+        DctAdd add_dct:=dctTest, add_key:=i, add_item:=ThisWorkbook, add_seq:=seq_ascending ' by key case sensitive is the default
     Next i
     
     '~~ Add an already existing key, ignored when the item is neither numeric nor a string
-    DctAdd dct:=dctTest, key:=5, item:=ThisWorkbook, seq:=seq_ascending ' by key case sensitive is the default
-    
-    EoP ErrSrc(PROC)
+    DctAdd add_dct:=dctTest, add_key:=5, add_item:=ThisWorkbook, add_seq:=seq_ascending ' by key case sensitive is the default
+     
+    mTrc.EoP ErrSrc(PROC)
     
 End Sub
 
@@ -94,22 +105,22 @@ Private Sub Test_DctAdd_02_KeyIsObjectWithNameProperty()
     Dim i   As Long
     Dim vbc As VBComponent
     
-    BoP ErrSrc(PROC)
+    mTrc.BoP ErrSrc(PROC)
     Set dctTest = Nothing
     For Each vbc In ThisWorkbook.VBProject.VBComponents
-        DctAdd dct:=dctTest, key:=vbc, item:=vbc.Name, seq:=seq_ascending ' by key case sensitive is the default
+        DctAdd add_dct:=dctTest, add_key:=vbc, add_item:=vbc.Name, add_seq:=seq_ascending ' by key case sensitive is the default
     Next vbc
-    Debug.Assert dctTest.Count = 9
-    Debug.Assert dctTest.Items()(0) = "clsCallStack"
+    Debug.Assert dctTest.Count = ThisWorkbook.VBProject.VBComponents.Count
+    Debug.Assert dctTest.Items()(0) = "fMsg"
     Debug.Assert dctTest.Items()(dctTest.Count - 1) = "wsDct"
     
     '~~ Add an already existing key = update the item
     Set vbc = ThisWorkbook.VBProject.VBComponents("mTest")
-    DctAdd dct:=dctTest, key:=vbc, item:=vbc.Name, seq:=seq_ascending ' by key case sensitive is the default
-    Debug.Assert dctTest.Count = 9
-    Debug.Assert dctTest.Items()(0) = "clsCallStack"
+    DctAdd add_dct:=dctTest, add_key:=vbc, add_item:=vbc.Name, add_seq:=seq_ascending ' by key case sensitive is the default
+    Debug.Assert dctTest.Count = ThisWorkbook.VBProject.VBComponents.Count
+    Debug.Assert dctTest.Items()(0) = "fMsg"
     Debug.Assert dctTest.Items()(dctTest.Count - 1) = "wsDct"
-    EoP ErrSrc(PROC)
+    mTrc.EoP ErrSrc(PROC)
         
 End Sub
 
@@ -122,23 +133,23 @@ Private Sub Test_DctAdd_03_ItemIsObjectWithNameProperty()
     Dim i   As Long
     Dim vbc As VBComponent
     
-    BoP ErrSrc(PROC)
+    mTrc.BoP ErrSrc(PROC)
     Set dctTest = Nothing
     For Each vbc In ThisWorkbook.VBProject.VBComponents
-        DctAdd dct:=dctTest, key:=vbc.Name, item:=vbc, order:=order_byitem, seq:=seq_ascending
+        DctAdd add_dct:=dctTest, add_key:=vbc.Name, add_item:=vbc, add_order:=order_byitem, add_seq:=seq_ascending
     Next vbc
-    Debug.Assert dctTest.Count = 9
+    Debug.Assert dctTest.Count = ThisWorkbook.VBProject.VBComponents.Count
 '    Test_DctAdd_DisplayResult dctTest
-    Debug.Assert dctTest.Items()(0).Name = "clsCallStack"
+    Debug.Assert dctTest.Items()(0).Name = "fMsg"
     Debug.Assert dctTest.Items()(dctTest.Count - 1).Name = "wsDct"
     
     '~~ Add an already existing key = update the item
     Set vbc = ThisWorkbook.VBProject.VBComponents("mTest")
-    DctAdd dct:=dctTest, key:=vbc.Name, item:=vbc, order:=order_byitem, seq:=seq_ascending
-    Debug.Assert dctTest.Count = 9
-    Debug.Assert dctTest.Items()(0).Name = "clsCallStack"
+    DctAdd add_dct:=dctTest, add_key:=vbc.Name, add_item:=vbc, add_order:=order_byitem, add_seq:=seq_ascending
+    Debug.Assert dctTest.Count = ThisWorkbook.VBProject.VBComponents.Count
+    Debug.Assert dctTest.Items()(0).Name = "fMsg"
     Debug.Assert dctTest.Items()(dctTest.Count - 1).Name = "wsDct"
-    EoP ErrSrc(PROC)
+    mTrc.EoP ErrSrc(PROC)
         
 End Sub
 
@@ -148,23 +159,23 @@ Private Sub Test_DctAdd_04_InsertKeyBefore()
     Dim vbc_second As VBComponent
     Dim vbc_first As VBComponent
     
-    BoP ErrSrc(PROC)
+    mTrc.BoP ErrSrc(PROC)
     
     '~~ Preparation
     Test_DctAdd_02_KeyIsObjectWithNameProperty
-    Debug.Assert dctTest.Keys()(0).Name = "clsCallStack"
-    Debug.Assert dctTest.Keys()(1).Name = "clsCallStackItem"
-    Set vbc_second = ThisWorkbook.VBProject.VBComponents("clsCallStackItem")
-    Set vbc_first = ThisWorkbook.VBProject.VBComponents("clsCallStack")
+    Debug.Assert dctTest.Keys()(0).Name = "fMsg"
+    Debug.Assert dctTest.Keys()(1).Name = "mDct"
+    Set vbc_second = ThisWorkbook.VBProject.VBComponents("mTrc")
+    Set vbc_first = ThisWorkbook.VBProject.VBComponents("mTest")
     dctTest.Remove vbc_second
-    Debug.Assert dctTest.Count = 8
+    Debug.Assert dctTest.Count = ThisWorkbook.VBProject.VBComponents.Count - 1
     
     '~~ Test
-    DctAdd dctTest, vbc_second, vbc_second.Name, order:=order_bykey, seq:=seq_beforetarget, target:=vbc_first
-    Debug.Assert dctTest.Count = 9
-    Debug.Assert dctTest.Keys()(0).Name = "clsCallStackItem"
-    Debug.Assert dctTest.Keys()(1).Name = "clsCallStack"
-    EoP ErrSrc(PROC)
+    DctAdd dctTest, vbc_second, vbc_second.Name, add_order:=order_bykey, add_seq:=seq_beforetarget, add_target:=vbc_first
+    Debug.Assert dctTest.Count = ThisWorkbook.VBProject.VBComponents.Count
+    Debug.Assert dctTest.Keys()(0).Name = "fMsg"
+    Debug.Assert dctTest.Keys()(1).Name = "mDct"
+    mTrc.EoP ErrSrc(PROC)
     
 End Sub
 
@@ -174,23 +185,23 @@ Private Sub Test_DctAdd_05_InsertKeyAfter()
     Dim vbc_second As VBComponent
     Dim vbc_first As VBComponent
     
-    BoP ErrSrc(PROC)
+    mTrc.BoP ErrSrc(PROC)
     
     '~~ Preparation
     Test_DctAdd_02_KeyIsObjectWithNameProperty
-    Debug.Assert dctTest.Keys()(0).Name = "clsCallStack"
-    Debug.Assert dctTest.Keys()(1).Name = "clsCallStackItem"
-    Set vbc_first = ThisWorkbook.VBProject.VBComponents("clsCallStack")
-    Set vbc_second = ThisWorkbook.VBProject.VBComponents("clsCallStackItem")
+    Debug.Assert dctTest.Keys()(0).Name = "fMsg"
+    Debug.Assert dctTest.Keys()(1).Name = "mDct"
+    Set vbc_first = ThisWorkbook.VBProject.VBComponents(1)
+    Set vbc_second = ThisWorkbook.VBProject.VBComponents(2)
     
     '~~ Test
     dctTest.Remove vbc_first
-    Debug.Assert dctTest.Count = 8
-    DctAdd dctTest, key:=vbc_first, item:=vbc_first.Name, order:=order_bykey, seq:=seq_aftertarget, target:=vbc_second
-    Debug.Assert dctTest.Count = 9
-    Debug.Assert dctTest.Keys()(0).Name = "clsCallStackItem"
-    Debug.Assert dctTest.Keys()(1).Name = "clsCallStack"
-    EoP ErrSrc(PROC)
+    Debug.Assert dctTest.Count = ThisWorkbook.VBProject.VBComponents.Count - 1
+    DctAdd dctTest, add_key:=vbc_first, add_item:=vbc_first.Name, add_order:=order_bykey, add_seq:=seq_aftertarget, add_target:=vbc_second
+    Debug.Assert dctTest.Count = ThisWorkbook.VBProject.VBComponents.Count
+    Debug.Assert dctTest.Keys()(0).Name = "fMsg"
+    Debug.Assert dctTest.Keys()(1).Name = "mDct"
+    mTrc.EoP ErrSrc(PROC)
     
 End Sub
 
@@ -200,23 +211,23 @@ Private Sub Test_DctAdd_06_InsertItemBefore()
     Dim vbc_second As VBComponent
     Dim vbc_first As VBComponent
     
-    BoP ErrSrc(PROC)
+    mTrc.BoP ErrSrc(PROC)
     
     '~~ Preparation
     Test_DctAdd_03_ItemIsObjectWithNameProperty
-    Debug.Assert dctTest.Keys()(0) = "clsCallStack"
-    Debug.Assert dctTest.Keys()(1) = "clsCallStackItem"
-    Set vbc_second = ThisWorkbook.VBProject.VBComponents("clsCallStackItem")
-    Set vbc_first = ThisWorkbook.VBProject.VBComponents("clsCallStack")
+    Debug.Assert dctTest.Keys()(0) = "fMsg"
+    Debug.Assert dctTest.Keys()(1) = "mDct"
+    Set vbc_second = ThisWorkbook.VBProject.VBComponents("fMsg")
+    Set vbc_first = ThisWorkbook.VBProject.VBComponents("mDct")
     dctTest.Remove vbc_second.Name
-    Debug.Assert dctTest.Count = 8
+    Debug.Assert dctTest.Count = ThisWorkbook.VBProject.VBComponents.Count - 1
     
     '~~ Test
-    DctAdd dctTest, vbc_second.Name, vbc_second, order:=order_byitem, seq:=seq_beforetarget, target:=vbc_first
-    Debug.Assert dctTest.Count = 9
-    Debug.Assert dctTest.Items()(0).Name = "clsCallStackItem"
-    Debug.Assert dctTest.Items()(1).Name = "clsCallStack"
-    EoP ErrSrc(PROC)
+    DctAdd dctTest, vbc_second.Name, vbc_second, add_order:=order_byitem, add_seq:=seq_beforetarget, add_target:=vbc_first
+    Debug.Assert dctTest.Count = ThisWorkbook.VBProject.VBComponents.Count
+    Debug.Assert dctTest.Items()(0).Name = "fMsg"
+    Debug.Assert dctTest.Items()(1).Name = "mDct"
+    mTrc.EoP ErrSrc(PROC)
     
 End Sub
 
@@ -226,40 +237,40 @@ Private Sub Test_DctAdd_07_InsertItemAfter()
     Dim vbc_second As VBComponent
     Dim vbc_first As VBComponent
     
-    BoP ErrSrc(PROC)
+    mTrc.BoP ErrSrc(PROC)
     
     '~~ Preparation
     Test_DctAdd_03_ItemIsObjectWithNameProperty
-    Debug.Assert dctTest.Keys()(0) = "clsCallStack"
-    Debug.Assert dctTest.Keys()(1) = "clsCallStackItem"
-    Set vbc_second = ThisWorkbook.VBProject.VBComponents("clsCallStackItem")
-    Set vbc_first = ThisWorkbook.VBProject.VBComponents("clsCallStack")
+    Debug.Assert dctTest.Keys()(0) = "fMsg"
+    Debug.Assert dctTest.Keys()(1) = "mDct"
+    Set vbc_second = ThisWorkbook.VBProject.VBComponents("mDct")
+    Set vbc_first = ThisWorkbook.VBProject.VBComponents("fMsg")
     dctTest.Remove vbc_first.Name
-    Debug.Assert dctTest.Count = 8
+    Debug.Assert dctTest.Count = ThisWorkbook.VBProject.VBComponents.Count - 1
     
     '~~ Test
-    DctAdd dctTest, vbc_first.Name, vbc_first, order:=order_byitem, seq:=seq_aftertarget, target:=vbc_second
-    Debug.Assert dctTest.Count = 9
+    DctAdd dctTest, vbc_first.Name, vbc_first, add_order:=order_byitem, add_seq:=seq_aftertarget, add_target:=vbc_second
+    Debug.Assert dctTest.Count = ThisWorkbook.VBProject.VBComponents.Count
     Debug.Assert dctTest.Items()(0).Name = vbc_second.Name
     Debug.Assert dctTest.Items()(1).Name = vbc_first.Name
-    EoP ErrSrc(PROC)
+    mTrc.EoP ErrSrc(PROC)
     
 End Sub
 
 Private Sub Test_DctAdd_08_NumKey()
     Const PROC = "Test_DctAdd_08_NumKey"
-    BoP ErrSrc(PROC)
+    mTrc.BoP ErrSrc(PROC)
     Set dctTest = Nothing
     
-    DctAdd dctTest, 2, 5, seq:=seq_ascending
-    DctAdd dctTest, 5, 2, seq:=seq_ascending
-    DctAdd dctTest, 3, 4, seq:=seq_ascending
+    DctAdd dctTest, 2, 5, add_seq:=seq_ascending
+    DctAdd dctTest, 5, 2, add_seq:=seq_ascending
+    DctAdd dctTest, 3, 4, add_seq:=seq_ascending
     
     Debug.Assert dctTest.Count = 3
     Debug.Assert dctTest.Keys()(0) = 2
     Debug.Assert dctTest.Keys()(dctTest.Count - 1) = 5
     
-    EoP ErrSrc(PROC)
+    mTrc.EoP ErrSrc(PROC)
     
 End Sub
 
@@ -267,32 +278,30 @@ Private Sub Test_DctAdd_09_Performance_n(ByVal lAdds As Long)
     Const PROC = "Test_DctAdd_09_Performance_n"
     Dim i   As Long
     
-    BoP ErrSrc(PROC)
+    mTrc.BoP ErrSrc(PROC), "items added ordered = ", lAdds
     Set dctTest = Nothing
     For i = 1 To lAdds - 1 Step 2
-        DctAdd dct:=dctTest, key:=i, item:=ThisWorkbook, seq:=seq_ascending ' by key case sensitive is the default
+        DctAdd add_dct:=dctTest, add_key:=i, add_item:=ThisWorkbook, add_seq:=seq_ascending ' by key case sensitive is the default
     Next i
     For i = lAdds To 2 Step -2
-        DctAdd dct:=dctTest, key:=i, item:=ThisWorkbook, seq:=seq_ascending ' by key case sensitive is the default
+        DctAdd add_dct:=dctTest, add_key:=i, add_item:=ThisWorkbook, add_seq:=seq_ascending ' by key case sensitive is the default
     Next i
-    EoP ErrSrc(PROC)
+    mTrc.EoP ErrSrc(PROC)
     
 End Sub
 
 Private Sub Test_DctAdd_99_Performance()
     Const PROC = "Test_DctAdd_09_Performance"
     
-    BoP ErrSrc(PROC)
+    mTrc.BoP ErrSrc(PROC)
     
     Test_DctAdd_09_Performance_n 100
     Test_DctAdd_09_Performance_n 500
     Test_DctAdd_09_Performance_n 1000
     Test_DctAdd_09_Performance_n 1500
     Test_DctAdd_09_Performance_n 2000
-    Test_DctAdd_09_Performance_n 2500
-    Test_DctAdd_09_Performance_n 3000
     
-    EoP ErrSrc(PROC)
+    mTrc.EoP ErrSrc(PROC)
     
 End Sub
 
@@ -332,14 +341,14 @@ Private Sub Test_DctDiffers()
     Dim dct2 As Dictionary
     Dim vbc  As VBComponent
     
-    BoP ErrSrc(PROC)
+    mTrc.BoP ErrSrc(PROC)
     Set dct1 = Nothing
     Set dct2 = Nothing
     For Each vbc In ThisWorkbook.VBProject.VBComponents
-        DctAdd dct:=dct1, key:=vbc, item:=vbc, seq:=seq_ascending ' by key case sensitive is the default
+        DctAdd add_dct:=dct1, add_key:=vbc, add_item:=vbc, add_seq:=seq_ascending ' by key case sensitive is the default
     Next vbc
     For Each vbc In ThisWorkbook.VBProject.VBComponents
-        DctAdd dct:=dct2, key:=vbc, item:=vbc, seq:=seq_ascending ' by key case sensitive is the default
+        DctAdd add_dct:=dct2, add_key:=vbc, add_item:=vbc, add_seq:=seq_ascending ' by key case sensitive is the default
     Next vbc
     
     '~~ Test: Differs in keys
@@ -349,7 +358,7 @@ Private Sub Test_DctDiffers()
     Debug.Assert DctDiffers(dct1, dct2)
     Set dct1 = Nothing
     Set dct2 = Nothing
-    EoP ErrSrc(PROC)
+    mTrc.EoP ErrSrc(PROC)
     
 End Sub
 
