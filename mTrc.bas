@@ -41,10 +41,10 @@ Alias "QueryPerformanceFrequency" (cySysFrequency As Currency) As Long
 Private Declare PtrSafe Function getTickCount Lib "kernel32" _
 Alias "QueryPerformanceCounter" (cyTickCount As Currency) As Long
 
-Private Const DIR_BEGIN_ID      As String = ">"     ' Begin procedure or code trace indicator
-Private Const DIR_END_ID        As String = "<"     ' End procedure or code trace indicator
-Private Const COMMENT           As String = " !!! "
-Private Const CONCAT            As String = "||"
+Private Const DIR_BEGIN_ID  As String = ">"     ' Begin procedure or code trace indicator
+Private Const DIR_END_ID    As String = "<"     ' End procedure or code trace indicator
+Private Const COMMENT       As String = " !!! "
+
 Private Const POS_ITMDRCTV      As Long = 1
 Private Const POS_ITMID         As Long = 2
 Private Const POS_ITMINF        As Long = 3
@@ -129,7 +129,7 @@ End Property
 Private Property Get ItmInf(Optional ByRef entry As Collection) As String
     On Error Resume Next ' in case this has never been collected
     ItmInf = entry("I")(POS_ITMINF)
-    If Err.Number <> 0 Then ItmInf = vbNullString
+    If err.Number <> 0 Then ItmInf = vbNullString
 End Property
 
 Private Property Get ItmLvl(Optional ByRef entry As Collection) As Long
@@ -147,7 +147,7 @@ End Property
 Private Property Get NtryScsElpsd(Optional ByRef entry As Collection) As Currency
     On Error Resume Next
     NtryScsElpsd = entry("SE")
-    If Err.Number <> 0 Then NtryScsElpsd = Space$(Len(sFrmtScsElpsd))
+    If err.Number <> 0 Then NtryScsElpsd = Space$(Len(sFrmtScsElpsd))
 End Property
 
 Private Property Let NtryScsElpsd(Optional ByRef entry As Collection, ByRef cy As Currency)
@@ -157,7 +157,7 @@ End Property
 Private Property Get NtryScsGrss(Optional ByRef entry As Collection) As Currency
     On Error Resume Next ' in case no value exists (the case for each begin entry)
     NtryScsGrss = entry("SG")
-    If Err.Number <> 0 Then NtryScsGrss = Space$(Len(sFrmtScsGrss))
+    If err.Number <> 0 Then NtryScsGrss = Space$(Len(sFrmtScsGrss))
 End Property
 
 Private Property Let NtryScsGrss(Optional ByRef entry As Collection, ByRef cy As Currency)
@@ -167,7 +167,7 @@ End Property
 Private Property Get NtryScsNt(Optional ByRef entry As Collection) As Double
     On Error Resume Next
     NtryScsNt = entry("SN")
-    If Err.Number <> 0 Then NtryScsNt = Space$(Len(sFrmtScsNt))
+    If err.Number <> 0 Then NtryScsNt = Space$(Len(sFrmtScsNt))
 End Property
 
 Private Property Let NtryScsNt(Optional ByRef entry As Collection, ByRef dbl As Double)
@@ -177,7 +177,7 @@ End Property
 Private Property Get NtryScsOvrhdItm(Optional ByRef entry As Collection) As Double
     On Error Resume Next
     NtryScsOvrhdItm = entry("SOI")
-    If Err.Number <> 0 Then NtryScsOvrhdItm = Space$(Len(sFrmtScsOvrhdItm))
+    If err.Number <> 0 Then NtryScsOvrhdItm = Space$(Len(sFrmtScsOvrhdItm))
 End Property
 
 Private Property Let NtryScsOvrhdItm(Optional ByRef entry As Collection, ByRef dbl As Double)
@@ -187,7 +187,7 @@ End Property
 Private Property Get NtryScsOvrhdNtry(Optional ByRef entry As Collection) As Double
     On Error Resume Next
     NtryScsOvrhdNtry = entry("SON")
-    If Err.Number <> 0 Then NtryScsOvrhdNtry = Space$(Len(sFrmtScsOvrhdItm))
+    If err.Number <> 0 Then NtryScsOvrhdNtry = Space$(Len(sFrmtScsOvrhdItm))
 End Property
 
 Private Property Let NtryScsOvrhdNtry(Optional ByRef entry As Collection, ByRef dbl As Double)
@@ -205,7 +205,7 @@ End Property
 Private Property Get NtryTcksGrss(Optional ByRef entry As Collection) As Currency
     On Error Resume Next
     NtryTcksGrss = entry("TG")
-    If Err.Number <> 0 Then NtryTcksGrss = 0
+    If err.Number <> 0 Then NtryTcksGrss = 0
 End Property
 
 Private Property Let NtryTcksGrss(Optional ByRef entry As Collection, ByRef cy As Currency)
@@ -215,7 +215,7 @@ End Property
 Private Property Get NtryTcksNt(Optional ByRef entry As Collection) As Currency
     On Error Resume Next
     NtryTcksNt = entry("TN")
-    If Err.Number <> 0 Then NtryTcksNt = 0
+    If err.Number <> 0 Then NtryTcksNt = 0
 End Property
 
 Private Property Let NtryTcksNt(Optional ByRef entry As Collection, ByRef cy As Currency)
@@ -225,7 +225,7 @@ End Property
 Private Property Get NtryTcksOvrhdItm(Optional ByRef entry As Collection) As Currency
     On Error Resume Next
     NtryTcksOvrhdItm = entry("TOI")
-    If Err.Number <> 0 Then NtryTcksOvrhdItm = 0
+    If err.Number <> 0 Then NtryTcksOvrhdItm = 0
 End Property
 
 Private Property Let NtryTcksOvrhdItm(Optional ByRef entry As Collection, ByRef cy As Currency)
@@ -235,7 +235,7 @@ End Property
 Private Property Get NtryTcksOvrhdNtry(Optional ByRef entry As Collection) As Currency
     On Error Resume Next
     NtryTcksOvrhdNtry = entry("TON")
-    If Err.Number <> 0 Then NtryTcksOvrhdNtry = 0
+    If err.Number <> 0 Then NtryTcksOvrhdNtry = 0
 End Property
 
 Private Property Let NtryTcksOvrhdNtry(Optional ByRef entry As Collection, ByRef cy As Currency)
@@ -507,14 +507,12 @@ Public Sub Dsply()
     Next v
     sTrace = sTrace & vbLf & DsplyFtr(lLenHeader)
     With fMsg
-'        .DsplyFrmsWthBrdrsTestOnly = True
-'        .DsplyFrmsWthCptnTestOnly = True
         .MaxFormWidthPrcntgOfScreenSize = 95
         .MsgTitle = "Execution Trace, displayed because the Conditional Compile Argument ""ExecTrace = 1""!"
         .MsgText(1) = sTrace:   .MsgMonoSpaced(1) = True
         .MsgLabel(2) = "About overhead, precision, etc.:": .MsgText(2) = DsplyAbout
         .Setup
-        .Show
+        .show
     End With
     
 xt: mTrc.Terminate
@@ -538,8 +536,8 @@ Private Function DsplyAbout() As String
     dblOvrhdPcntg = (dblTtlScsOvrhdNtry / NtryScsElpsd(NtryLst)) * 100
     
     DsplyAbout = "> The trace itself, i.e. the collection of the begin and end data for each traced item " & _
-                 "(procedure or code) caused a performance loss of " & Format(dblTtlScsOvrhdNtry, sFrmtScsOvrhdItm) & _
-                 " seconds (=" & Format(dblOvrhdPcntg, "0.00") & "%). " _
+                 "(procedure or code) caused a performance loss of " & Format$(dblTtlScsOvrhdNtry, sFrmtScsOvrhdItm) & _
+                 " seconds (=" & Format$(dblOvrhdPcntg, "0.00") & "%). " _
                & "For a best possible execution time precision the overhead per traced item " _
                & "has been deducted from each of the " & cllTrc.Count / 2 & " traced item's execution time." _
       & vbLf _
@@ -559,7 +557,7 @@ Private Function DsplyFtr(ByVal lLenHeaderData As Long) ' Displayed trace footer
         Space$(lLenHeaderData) _
       & DIR_END_PROC _
       & " End execution trace " _
-      & Format(Now(), "hh:mm:ss")
+      & Format$(Now(), "hh:mm:ss")
 End Function
 
 Private Function DsplyHdr(ByRef lLenHeaderData As Long) As String
@@ -583,7 +581,7 @@ Private Function DsplyHdr(ByRef lLenHeaderData As Long) As String
     sHeaderTrace = _
       DIR_BEGIN_PROC _
     & " Begin execution trace " _
-    & Format(dtTraceBegin, "hh:mm:ss") _
+    & Format$(dtTraceBegin, "hh:mm:ss") _
     & " (exec time in seconds)"
 
     Select Case DisplayedInfo
@@ -693,9 +691,9 @@ Private Function DsplyArgs(ByVal entry As Collection) As String
     
     On Error Resume Next
     va = ItmArgs(entry)
-    If Err.Number <> 0 Then Exit Function
+    If err.Number <> 0 Then Exit Function
     i = LBound(va)
-    If Err.Number <> 0 Then Exit Function
+    If err.Number <> 0 Then Exit Function
     
     For i = i To UBound(va)
         If DsplyArgs = vbNullString Then
@@ -874,7 +872,7 @@ next_begin_entry:
             .MsgLabel(1) = "The following incosistencies made a trace result display useless/impossible:"
             .MsgText(1) = sTrace:   .MsgMonoSpaced(1) = True
             .Setup
-            .Show
+            .show
         End With
     Else
         DsplyNtryAllCnsstnt = True
@@ -901,7 +899,7 @@ Private Function DsplyValue(ByVal entry As Collection, _
                             ByVal frmt As String) As String
     If NtryIsBegin(entry) And value = 0 _
     Then DsplyValue = Space$(Len(frmt)) _
-    Else DsplyValue = IIf(value >= 0, Format(value, frmt), Space$(Len(frmt)))
+    Else DsplyValue = IIf(value >= 0, Format$(value, frmt), Space$(Len(frmt)))
 End Function
 
 Private Function DsplyValueFormat(ByRef thisformat As String, _
@@ -991,8 +989,8 @@ Private Sub ErrMsg( _
     Dim sTitle      As String
     Dim sDetails    As String
     
-    If err_no = 0 Then err_no = Err.Number
-    If err_dscrptn = vbNullString Then err_dscrptn = Err.Description
+    If err_no = 0 Then err_no = err.Number
+    If err_dscrptn = vbNullString Then err_dscrptn = err.Description
     If err_line = 0 Then err_line = Erl
     
     ErrMsgMatter err_source:=err_source, err_no:=err_no, err_line:=err_line, err_dscrptn:=err_dscrptn, msg_title:=sTitle, msg_details:=sDetails
