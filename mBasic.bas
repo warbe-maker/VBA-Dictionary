@@ -88,10 +88,42 @@ Public Enum xlOnOff ' ------------------------------------
     xlOn = 1        ' System constants (identical values)
     xlOff = -4146   ' grouped for being used as Enum Type.
 End Enum            ' ------------------------------------
+Public Enum StringAlign
+    AlignLeft = 1
+    AlignRight = 2
+    AlignCentered = 3
+End Enum
 
 Public Property Get MsgReply() As Variant:          MsgReply = vMsgReply:   End Property
 
 Public Property Let MsgReply(ByVal v As Variant):   vMsgReply = v:          End Property
+
+Public Function Align( _
+                ByVal a_text As String, _
+                ByVal a_length As Long, _
+       Optional ByVal a_align As StringAlign = AlignLeft, _
+       Optional ByVal a_margin As String = vbNullString, _
+       Optional ByVal a_fill As String = " ") As String
+' ---------------------------------------------------------
+' Returns a string (a_text) with a lenght (a_length)
+' aligned (a_align) filled with characters (a_fill).
+' ---------------------------------------------------------
+    Dim lSpace As Long
+    If Len(a_text) >= a_length Then
+        Align = VBA.Left$(a_text, a_length)
+    Else
+        Select Case a_align
+            Case AlignLeft:     Align = a_text & a_margin & VBA.String$(a_length - (Len(a_text) + Len(a_margin)), a_fill)
+            Case AlignRight:    Align = VBA.String$(a_length - (Len(a_text) - Len(a_margin)), a_fill) & a_text
+            Case AlignCentered
+                lSpace = Max(1, ((a_length - Len(a_text) - (2 * Len(a_margin))) / 2))
+                Align = VBA.String$(lSpace, a_fill) & a_margin & a_text & a_margin & VBA.String$(lSpace, a_fill)
+                Align = VBA.Right$(Align, a_length)
+                
+        End Select
+    End If
+
+End Function
 
 Public Function AppErr(ByVal lNo As Long) As Long
 ' -------------------------------------------------------------------------------
@@ -125,34 +157,39 @@ Public Function AppIsInstalled(ByVal sApp As String) As Boolean
 
 End Function
 
-Public Function ArrayCompare(ByVal ac_a1 As Variant, _
-                             ByVal ac_a2 As Variant, _
-                    Optional ByVal ac_stop_after As Long = 1, _
-                    Optional ByVal ac_id1 As String = vbNullString, _
-                    Optional ByVal ac_id2 As String = vbNullString, _
-                    Optional ByVal ac_ignore_case As Boolean = True) As Variant
-' ----------------------------------------------------------------------------
-' Returns an array of n (as_stop_after) lines which are different between
-' array 1 (ac_a1) and array 2 (ac_a2). Each line element contains the
-' lines which differ in the form:
-' linenumber: <ac_id1> '<line>' || <ac_id2> '<line>'
-' The comparisonWhen a value for stop after n (ac_stop_after) lines.
-' Note: Either or both arrays may not be assigned (=empty).
-' ----------------------------------------------------------------------------
+Public Function ArrayCompare( _
+                       ByVal ac_a1 As Variant, _
+                       ByVal ac_a2 As Variant, _
+              Optional ByVal ac_stop_after As Long = 0, _
+              Optional ByVal ac_id1 As String = vbNullString, _
+              Optional ByVal ac_id2 As String = vbNullString, _
+              Optional ByVal ac_ignore_case As Boolean = True, _
+              Optional ByVal ac_ignore_empty As Boolean = True) As Dictionary
+' --------------------------------------------------------------------------
+' Returns a Dictionary with n (ac_stop_after) lines which are different
+' between array 1 (ac_a1) and array 2 (ac_a2) with the line number as the
+' key and the two different lines as item in the form: '<line>'vbLf'<line>'
+' When no differnece is encountered the returned Dictionary is empty.
+' When no ac_stop_after <> 0 is provided all lines different are returned
+' --------------------------------------------------------------------------
     Const PROC = "ArrayCompare"
     
     On Error GoTo eh
     Dim l       As Long
     Dim i       As Long
-    Dim va()    As Variant
     Dim lMethod As VbCompareMethod
+    Dim dct     As New Dictionary
     
     If ac_ignore_case Then lMethod = vbTextCompare Else lMethod = vbBinaryCompare
     
     If Not mBasic.ArrayIsAllocated(ac_a1) And mBasic.ArrayIsAllocated(ac_a2) Then
-        va = ac_a2
+        For i = LBound(ac_a2) To UBound(ac_a2)
+            dct.Add i + 1, "'" & ac_a2(i) & "'" & vbLf
+        Next i
     ElseIf mBasic.ArrayIsAllocated(ac_a1) And Not mBasic.ArrayIsAllocated(ac_a2) Then
-        va = ac_a1
+        For i = LBound(ac_a1) To UBound(ac_a1)
+            dct.Add i + 1, "'" & ac_a1(i) & "'" & vbLf
+        Next i
     ElseIf Not mBasic.ArrayIsAllocated(ac_a1) And Not mBasic.ArrayIsAllocated(ac_a2) Then
         GoTo xt
     End If
@@ -160,31 +197,34 @@ Public Function ArrayCompare(ByVal ac_a1 As Variant, _
     l = 0
     For i = LBound(ac_a1) To Min(UBound(ac_a1), UBound(ac_a2))
         If StrComp(ac_a1(i), ac_a2(i), lMethod) <> 0 Then
-            ReDim Preserve va(l)
-            va(l) = Format$(i, "000") & " " & ac_id1 & " '" & ac_a1(i) & "'  < >  '" & ac_id2 & " " & ac_a2(i) & "'"
+            dct.Add i + 1, "'" & ac_a1(i) & "'" & vbLf & "'" & ac_a2(i) & "'"
             l = l + 1
-            If ac_stop_after > 0 And l >= ac_stop_after Then GoTo xt
+            If ac_stop_after <> 0 And l >= ac_stop_after Then
+                GoTo xt
+            End If
         End If
     Next i
     
     If UBound(ac_a1) < UBound(ac_a2) Then
         For i = UBound(ac_a1) + 1 To UBound(ac_a2)
-            ReDim Preserve va(l)
-            va(l) = Format$(i, "000") & ac_id2 & ": '" & ac_a2(i) & "'"
+            dct.Add i + 1, "''" & vbLf & " '" & ac_a2(i) & "'"
             l = l + 1
-            If ac_stop_after > 0 And l >= ac_stop_after Then GoTo xt
+            If ac_stop_after <> 0 And l >= ac_stop_after Then
+                GoTo xt
+            End If
         Next i
         
     ElseIf UBound(ac_a2) < UBound(ac_a1) Then
         For i = UBound(ac_a2) + 1 To UBound(ac_a1)
-            ReDim Preserve va(l)
-            va(l) = Format$(i, "000") & " " & ac_id1 & " '" & ac_a1(i) & "'"
+            dct.Add i + 1, "'" & ac_a1(i) & "'" & vbLf & "''"
             l = l + 1
-            If ac_stop_after > 0 And l >= ac_stop_after Then GoTo xt
+            If ac_stop_after <> 0 And l >= ac_stop_after Then
+                GoTo xt
+            End If
         Next i
     End If
 
-xt: ArrayCompare = va
+xt: Set ArrayCompare = dct
     Exit Function
     
 eh: ErrMsg ErrSrc(PROC)
@@ -424,6 +464,18 @@ xt: Exit Function
 eh: ErrMsg ErrSrc(PROC)
 End Function
 
+Public Function Center(ByVal s1 As String, _
+                       ByVal l As Long, _
+               Optional ByVal sFill As String = " ") As String
+' ------------------------------------------------------------
+' Returns s1 centered in a string with length l.
+' ------------------------------------------------------------
+    Dim lSpace As Long
+    lSpace = Max(1, ((l - Len(s1)) / 2))
+    Center = VBA.String$(lSpace, sFill) & s1 & VBA.String$(lSpace, sFill)
+    Center = Right(Center, l)
+End Function
+
 Public Function CleanTrim(ByVal s As String, _
                  Optional ByVal ConvertNonBreakingSpace As Boolean = True) As String
 ' ----------------------------------------------------------------------------------
@@ -462,8 +514,25 @@ Public Function ElementOfIndex(ByVal a As Variant, _
     
 End Function
 
+Private Sub ErrMsg( _
+             ByVal err_source As String, _
+    Optional ByVal err_no As Long = 0, _
+    Optional ByVal err_dscrptn As String = vbNullString)
+' ------------------------------------------------------
+' This Common Component does not have its own error
+' handling. Instead it passes on any error to the
+' caller's error handling.
+' ------------------------------------------------------
+    
+    If err_no = 0 Then err_no = Err.Number
+    If err_dscrptn = vbNullString Then err_dscrptn = Err.Description
+
+    Err.Raise Number:=err_no, Source:=err_source, Description:=err_dscrptn
+
+End Sub
+
 Private Function ErrSrc(ByVal sProc As String) As String
-    ErrSrc = ThisWorkbook.Name & " mBasic." & sProc
+    ErrSrc = ThisWorkbook.name & " mBasic." & sProc
 End Function
 
 Public Function IsCvName(ByVal v As Variant) As Boolean
@@ -580,22 +649,4 @@ Public Function SelectFolder( _
     SelectFolder = sFolder
 
 End Function
-
-Private Sub ErrMsg( _
-             ByVal err_source As String, _
-    Optional ByVal err_no As Long = 0, _
-    Optional ByVal err_dscrptn As String = vbNullString)
-' ------------------------------------------------------
-' This Common Component does not have its own error
-' handling. Instead it passes on any error to the
-' caller's error handling.
-' ------------------------------------------------------
-    
-    If err_no = 0 Then err_no = Err.Number
-    If err_dscrptn = vbNullString Then err_dscrptn = Err.Description
-
-    Err.Raise Number:=err_no, Source:=err_source, Description:=err_dscrptn
-
-End Sub
-
 

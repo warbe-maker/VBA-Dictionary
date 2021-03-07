@@ -141,7 +141,7 @@ Public Sub DctAdd(ByRef add_dct As Dictionary, _
         '~~ and the add_key already exists the add_item is updated
         If bOrderByKey And Not add_staywithfirst Then
             If .Exists(add_key) Then
-                If VarType(add_item) = vbObject Then Set .item(add_key) = add_item Else .item(add_key) = add_item
+                If VarType(add_item) = vbObject Then Set .Item(add_key) = add_item Else .Item(add_key) = add_item
                 GoTo end_proc
             End If
         End If
@@ -185,9 +185,9 @@ Public Sub DctAdd(ByRef add_dct As Dictionary, _
     
     For Each vKeyExisting In add_dct
         
-        If IsObject(add_dct.item(vKeyExisting)) _
-        Then Set vItemExisting = add_dct.item(vKeyExisting) _
-        Else vItemExisting = add_dct.item(vKeyExisting)
+        If VarType(add_dct.Item(vKeyExisting)) = vbObject _
+        Then Set vItemExisting = add_dct.Item(vKeyExisting) _
+        Else vItemExisting = add_dct.Item(vKeyExisting)
         
         With dctTemp
             If bDone Then
@@ -416,13 +416,13 @@ Private Function DctAddItemExists( _
     DctAddItemExists = False
     
     For Each v In dct
-        If VarType(dct.item(v)) = vbObject Then
-            If dct.item(v) Is dctitem Then
+        If VarType(dct.Item(v)) = vbObject Then
+            If dct.Item(v) Is dctitem Then
                 DctAddItemExists = True
                 Exit Function
             End If
         Else
-            If dct.item(v) = dctitem Then
+            If dct.Item(v) = dctitem Then
                 DctAddItemExists = True
                 Exit Function
             End If
