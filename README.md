@@ -22,6 +22,6 @@ Contribution of any kind in any way is welcome.
 
 The **_mDct_** module is the potential module for other useful services such like a _Sort_ (by item/key, ascending/descending, case-sensitive/case-insensitive) service which should be added in the future.
 
-[1]: https://gitcdn.link/repo/warbe-maker/Common-VBA-Dictionary-Procedures/master/mDct.bas
+[1]: https://gitcdn.link/repo/warbe-maker/Common-VBA-Dictionary-Procedures/master/source/mDct.bas
 [2]: https://github.com/warbe-maker/Common-VBA-Dictionary-Procedures
 [3]: https://warbe-maker.github.io/warbe-maker.github.io/vba/dictionary/common/2020/10/02/Common-VBA-Dictionary-instantly-ordered.html
