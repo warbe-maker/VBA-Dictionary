@@ -14,7 +14,7 @@ End Type                                ' ---------------------
 Private dctTest As Dictionary
 
 Private Function ErrSrc(ByVal sProc As String) As String
-    ErrSrc = ThisWorkbook.Name & " mTest." & sProc
+    ErrSrc = ThisWorkbook.name & " mTest." & sProc
 End Function
 
 Public Sub Test_DctAdd_00_Regression()
@@ -108,7 +108,7 @@ Private Sub Test_DctAdd_02_KeyIsObjectWithNameProperty()
     mTrc.BoP ErrSrc(PROC)
     Set dctTest = Nothing
     For Each vbc In ThisWorkbook.VBProject.VBComponents
-        DctAdd add_dct:=dctTest, add_key:=vbc, add_item:=vbc.Name, add_seq:=seq_ascending ' by key case sensitive is the default
+        DctAdd add_dct:=dctTest, add_key:=vbc, add_item:=vbc.name, add_seq:=seq_ascending ' by key case sensitive is the default
     Next vbc
     Debug.Assert dctTest.Count = ThisWorkbook.VBProject.VBComponents.Count
     Debug.Assert dctTest.Items()(0) = "fMsg"
@@ -116,7 +116,7 @@ Private Sub Test_DctAdd_02_KeyIsObjectWithNameProperty()
     
     '~~ Add an already existing key = update the item
     Set vbc = ThisWorkbook.VBProject.VBComponents("mTest")
-    DctAdd add_dct:=dctTest, add_key:=vbc, add_item:=vbc.Name, add_seq:=seq_ascending ' by key case sensitive is the default
+    DctAdd add_dct:=dctTest, add_key:=vbc, add_item:=vbc.name, add_seq:=seq_ascending ' by key case sensitive is the default
     Debug.Assert dctTest.Count = ThisWorkbook.VBProject.VBComponents.Count
     Debug.Assert dctTest.Items()(0) = "fMsg"
     Debug.Assert dctTest.Items()(dctTest.Count - 1) = "wsDct"
@@ -136,19 +136,19 @@ Private Sub Test_DctAdd_03_ItemIsObjectWithNameProperty()
     mTrc.BoP ErrSrc(PROC)
     Set dctTest = Nothing
     For Each vbc In ThisWorkbook.VBProject.VBComponents
-        DctAdd add_dct:=dctTest, add_key:=vbc.Name, add_item:=vbc, add_order:=order_byitem, add_seq:=seq_ascending
+        DctAdd add_dct:=dctTest, add_key:=vbc.name, add_item:=vbc, add_order:=order_byitem, add_seq:=seq_ascending
     Next vbc
     Debug.Assert dctTest.Count = ThisWorkbook.VBProject.VBComponents.Count
 '    Test_DctAdd_DisplayResult dctTest
-    Debug.Assert dctTest.Items()(0).Name = "fMsg"
-    Debug.Assert dctTest.Items()(dctTest.Count - 1).Name = "wsDct"
+    Debug.Assert dctTest.Items()(0).name = "fMsg"
+    Debug.Assert dctTest.Items()(dctTest.Count - 1).name = "wsDct"
     
     '~~ Add an already existing key = update the item
     Set vbc = ThisWorkbook.VBProject.VBComponents("mTest")
-    DctAdd add_dct:=dctTest, add_key:=vbc.Name, add_item:=vbc, add_order:=order_byitem, add_seq:=seq_ascending
+    DctAdd add_dct:=dctTest, add_key:=vbc.name, add_item:=vbc, add_order:=order_byitem, add_seq:=seq_ascending
     Debug.Assert dctTest.Count = ThisWorkbook.VBProject.VBComponents.Count
-    Debug.Assert dctTest.Items()(0).Name = "fMsg"
-    Debug.Assert dctTest.Items()(dctTest.Count - 1).Name = "wsDct"
+    Debug.Assert dctTest.Items()(0).name = "fMsg"
+    Debug.Assert dctTest.Items()(dctTest.Count - 1).name = "wsDct"
     mTrc.EoP ErrSrc(PROC)
         
 End Sub
@@ -163,18 +163,18 @@ Private Sub Test_DctAdd_04_InsertKeyBefore()
     
     '~~ Preparation
     Test_DctAdd_02_KeyIsObjectWithNameProperty
-    Debug.Assert dctTest.Keys()(0).Name = "fMsg"
-    Debug.Assert dctTest.Keys()(1).Name = "mDct"
+    Debug.Assert dctTest.Keys()(0).name = "fMsg"
+    Debug.Assert dctTest.Keys()(1).name = "mDct"
     Set vbc_second = ThisWorkbook.VBProject.VBComponents("mTrc")
     Set vbc_first = ThisWorkbook.VBProject.VBComponents("mTest")
     dctTest.Remove vbc_second
     Debug.Assert dctTest.Count = ThisWorkbook.VBProject.VBComponents.Count - 1
     
     '~~ Test
-    DctAdd dctTest, vbc_second, vbc_second.Name, add_order:=order_bykey, add_seq:=seq_beforetarget, add_target:=vbc_first
+    DctAdd dctTest, vbc_second, vbc_second.name, add_order:=order_bykey, add_seq:=seq_beforetarget, add_target:=vbc_first
     Debug.Assert dctTest.Count = ThisWorkbook.VBProject.VBComponents.Count
-    Debug.Assert dctTest.Keys()(0).Name = "fMsg"
-    Debug.Assert dctTest.Keys()(1).Name = "mDct"
+    Debug.Assert dctTest.Keys()(0).name = "fMsg"
+    Debug.Assert dctTest.Keys()(1).name = "mDct"
     mTrc.EoP ErrSrc(PROC)
     
 End Sub
@@ -189,18 +189,18 @@ Private Sub Test_DctAdd_05_InsertKeyAfter()
     
     '~~ Preparation
     Test_DctAdd_02_KeyIsObjectWithNameProperty
-    Debug.Assert dctTest.Keys()(0).Name = "fMsg"
-    Debug.Assert dctTest.Keys()(1).Name = "mDct"
+    Debug.Assert dctTest.Keys()(0).name = "fMsg"
+    Debug.Assert dctTest.Keys()(1).name = "mDct"
     Set vbc_first = ThisWorkbook.VBProject.VBComponents(1)
     Set vbc_second = ThisWorkbook.VBProject.VBComponents(2)
     
     '~~ Test
     dctTest.Remove vbc_first
     Debug.Assert dctTest.Count = ThisWorkbook.VBProject.VBComponents.Count - 1
-    DctAdd dctTest, add_key:=vbc_first, add_item:=vbc_first.Name, add_order:=order_bykey, add_seq:=seq_aftertarget, add_target:=vbc_second
+    DctAdd dctTest, add_key:=vbc_first, add_item:=vbc_first.name, add_order:=order_bykey, add_seq:=seq_aftertarget, add_target:=vbc_second
     Debug.Assert dctTest.Count = ThisWorkbook.VBProject.VBComponents.Count
-    Debug.Assert dctTest.Keys()(0).Name = "fMsg"
-    Debug.Assert dctTest.Keys()(1).Name = "mDct"
+    Debug.Assert dctTest.Keys()(0).name = "fMsg"
+    Debug.Assert dctTest.Keys()(1).name = "mDct"
     mTrc.EoP ErrSrc(PROC)
     
 End Sub
@@ -219,14 +219,14 @@ Private Sub Test_DctAdd_06_InsertItemBefore()
     Debug.Assert dctTest.Keys()(1) = "mDct"
     Set vbc_second = ThisWorkbook.VBProject.VBComponents("fMsg")
     Set vbc_first = ThisWorkbook.VBProject.VBComponents("mDct")
-    dctTest.Remove vbc_second.Name
+    dctTest.Remove vbc_second.name
     Debug.Assert dctTest.Count = ThisWorkbook.VBProject.VBComponents.Count - 1
     
     '~~ Test
-    DctAdd dctTest, vbc_second.Name, vbc_second, add_order:=order_byitem, add_seq:=seq_beforetarget, add_target:=vbc_first
+    DctAdd dctTest, vbc_second.name, vbc_second, add_order:=order_byitem, add_seq:=seq_beforetarget, add_target:=vbc_first
     Debug.Assert dctTest.Count = ThisWorkbook.VBProject.VBComponents.Count
-    Debug.Assert dctTest.Items()(0).Name = "fMsg"
-    Debug.Assert dctTest.Items()(1).Name = "mDct"
+    Debug.Assert dctTest.Items()(0).name = "fMsg"
+    Debug.Assert dctTest.Items()(1).name = "mDct"
     mTrc.EoP ErrSrc(PROC)
     
 End Sub
@@ -245,14 +245,14 @@ Private Sub Test_DctAdd_07_InsertItemAfter()
     Debug.Assert dctTest.Keys()(1) = "mDct"
     Set vbc_second = ThisWorkbook.VBProject.VBComponents("mDct")
     Set vbc_first = ThisWorkbook.VBProject.VBComponents("fMsg")
-    dctTest.Remove vbc_first.Name
+    dctTest.Remove vbc_first.name
     Debug.Assert dctTest.Count = ThisWorkbook.VBProject.VBComponents.Count - 1
     
     '~~ Test
-    DctAdd dctTest, vbc_first.Name, vbc_first, add_order:=order_byitem, add_seq:=seq_aftertarget, add_target:=vbc_second
+    DctAdd dctTest, vbc_first.name, vbc_first, add_order:=order_byitem, add_seq:=seq_aftertarget, add_target:=vbc_second
     Debug.Assert dctTest.Count = ThisWorkbook.VBProject.VBComponents.Count
-    Debug.Assert dctTest.Items()(0).Name = vbc_second.Name
-    Debug.Assert dctTest.Items()(1).Name = vbc_first.Name
+    Debug.Assert dctTest.Items()(0).name = vbc_second.name
+    Debug.Assert dctTest.Items()(1).name = vbc_first.name
     mTrc.EoP ErrSrc(PROC)
     
 End Sub
@@ -316,16 +316,16 @@ Public Sub Test_DctAdd_DisplayResult( _
     Dim lItemMax    As Long
     
     For Each v In dct
-        If VarType(v) = vbObject Then sKey = v.Name Else sKey = v
+        If VarType(v) = vbObject Then sKey = v.name Else sKey = v
         lKeyMax = Max(lKeyMax, Len(sKey))
-        If VarType(dct.item(v)) = vbObject Then sItem = dct.item(v).Name Else sItem = dct.item(v)
+        If VarType(dct.Item(v)) = vbObject Then sItem = dct.Item(v).name Else sItem = dct.Item(v)
         lItemMax = Max(lItemMax, Len(sItem))
     Next v
     
     Debug.Print ">> ----- " & s & " --------------"
     For Each v In dct
-        If VarType(v) = vbObject Then sKey = v.Name Else sKey = v
-        If VarType(dct.item(v)) = vbObject Then sItem = dct.item(v).Name Else sItem = dct.item(v)
+        If VarType(v) = vbObject Then sKey = v.name Else sKey = v
+        If VarType(dct.Item(v)) = vbObject Then sItem = dct.Item(v).name Else sItem = dct.Item(v)
         Debug.Print "Key: '" & sKey & "'," & Space(lKeyMax - Len(sKey)) & " Item: '" & sItem & "'"
     Next v
     Debug.Print "<< ----- " & s & " --------------"

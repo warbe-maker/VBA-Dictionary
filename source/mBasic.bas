@@ -657,23 +657,22 @@ Public Function SelectFolder( _
 
 End Function
 
-Public Function Nbspd(ByVal s As String) As String
-' ------------------------------------------------
-' Returns a non-breaking-spaced string enclosed in two non-breaking spaces.
-' Example: Nbspd("   Ab c") = '  A b c  '
-' Note: Any number of leading, trailing, or contained spaces are removed.
-' in the
-' provided string are replaced by a single non-breaking space and any leading and trailing spaces.
+Public Function Spaced(ByVal s As String) As String
+' -------------------------------------------------
+' Returns a non-breaking-spaced string.
+' Example: Spaced("Ab c") returns = "A b  c"
+' Note: Any provided leading abd trailing spaces
+'       unstripped, any included spaces a doubled.
 ' -------------------------------------------------
     Dim a() As Byte
-    Dim v   As Variant
+    Dim i   As Long
     
-    a = StrConv(Replace(Trim(s), " ", vbNullString), vbFromUnicode)
-    Nbspd = Chr$(160) & Chr$(160)
-    For Each v In a
-        Nbspd = Nbspd & Chr$(v) & Chr$(160)
-    Next v
-    Nbspd = Nbspd & Chr$(160)
-    
+    If s = vbNullString Then Exit Function
+    a = StrConv(Trim$(s), vbFromUnicode)
+    Spaced = Chr$(a(LBound(a)))
+    For i = LBound(a) + 1 To UBound(a)
+        If Chr$(a(i)) = " " Then Spaced = Spaced & Chr$(160) Else Spaced = Spaced & Chr$(160) & Chr$(a(i))
+    Next i
+
 End Function
 
