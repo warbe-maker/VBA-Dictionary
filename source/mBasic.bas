@@ -99,58 +99,48 @@ Public Property Get MsgReply() As Variant:          MsgReply = vMsgReply:   End 
 Public Property Let MsgReply(ByVal v As Variant):   vMsgReply = v:          End Property
 
 Public Function Align( _
-                ByVal s As String, _
-                ByVal lngth As Long, _
-       Optional ByVal aligned As StringAlign = AlignLeft, _
-       Optional ByVal margin As String = vbNullString, _
-       Optional ByVal fill As String = " ") As String
+                ByVal align_s As String, _
+                ByVal align_lngth As Long, _
+       Optional ByVal align_mode As StringAlign = AlignLeft, _
+       Optional ByVal align_margin As String = vbNullString, _
+       Optional ByVal align_fill As String = " ") As String
 ' ---------------------------------------------------------
-' Returns a string (s) with a lenght (lngth)
-' aligned (aligned) filled with characters (fill).
+' Returns a string (align_s) with a lenght (align_lngth)
+' aligned (aligned) filled with characters (align_fill).
 ' ---------------------------------------------------------
     Dim SpaceLeft       As Long
     Dim LengthRemaining As Long
     
-    Select Case aligned
+    Select Case align_mode
         Case AlignLeft
-            If Len(s & margin) >= lngth _
-            Then Align = VBA.Left$(s & margin, lngth) _
-            Else Align = s & margin & VBA.String$(lngth - (Len(s & margin)), fill)
+            If Len(align_s & align_margin) >= align_lngth _
+            Then Align = VBA.Left$(align_s & align_margin, align_lngth) _
+            Else Align = align_s & align_margin & VBA.String$(align_lngth - (Len(align_s & align_margin)), align_fill)
         Case AlignRight
-            If Len(margin & s) >= lngth _
-            Then Align = VBA.Left$(margin & s, lngth) _
-            Else Align = VBA.String$(lngth - (Len(margin & s)), fill) & margin & s
+            If Len(align_margin & align_s) >= align_lngth _
+            Then Align = VBA.Left$(align_margin & align_s, align_lngth) _
+            Else Align = VBA.String$(align_lngth - (Len(align_margin & align_s)), align_fill) & align_margin & align_s
         Case AlignCentered
-            If Len(margin & s & margin) >= lngth Then
-                Align = margin & Left$(s, lngth - (2 * Len(margin))) & margin
+            If Len(align_margin & align_s & align_margin) >= align_lngth Then
+                Align = align_margin & Left$(align_s, align_lngth - (2 * Len(align_margin))) & align_margin
             Else
-                SpaceLeft = Max(1, ((lngth - Len(s) - (2 * Len(margin))) / 2))
-                Align = VBA.String$(SpaceLeft, fill) & margin & s & margin & VBA.String$(SpaceLeft, fill)
-                Align = VBA.Right$(Align, lngth)
+                SpaceLeft = Max(1, ((align_lngth - Len(align_s) - (2 * Len(align_margin))) / 2))
+                Align = VBA.String$(SpaceLeft, align_fill) & align_margin & align_s & align_margin & VBA.String$(SpaceLeft, align_fill)
+                Align = VBA.Right$(Align, align_lngth)
             End If
     End Select
 
 End Function
 
-Public Function AppErr(ByVal lNo As Long) As Long
-' -------------------------------------------------------------------------------
-' Attention: This function is dedicated for being used with Err.Raise AppErr()
-'            in conjunction with the common error handling module mErrHndlr when
-'            the call stack is supported. The error number passed on to the entry
-'            procedure is interpreted when the error message is displayed.
-' The function ensures that a programmed (application) error numbers never
-' conflicts with VB error numbers by adding vbObjectError which turns it into a
-' negative value. In return, translates a negative error number back into an
-' Application error number. The latter is the reason why this function must never
-' be used with a true VB error number.
-' -------------------------------------------------------------------------------
-    
-    If lNo < 0 Then
-        AppErr = lNo - vbObjectError
-    Else
-        AppErr = vbObjectError + lNo
-    End If
-
+Private Function AppErr(ByVal app_err_no As Long) As Long
+' ------------------------------------------------------------------------------
+' Ensures that a programmed (i.e. an application) error numbers never conflicts
+' with the number of a VB runtime error. Thr function returns a given positive
+' number (app_err_no) with the vbObjectError added - which turns it into a
+' negative value. When the provided number is negative it returns the original
+' positive "application" error number e.g. for being used with an error message.
+' ------------------------------------------------------------------------------
+    AppErr = IIf(app_err_no < 0, app_err_no - vbObjectError, vbObjectError - app_err_no)
 End Function
 
 Public Function AppIsInstalled(ByVal sApp As String) As Boolean
@@ -539,7 +529,7 @@ Private Sub ErrMsg( _
 End Sub
 
 Private Function ErrSrc(ByVal sProc As String) As String
-    ErrSrc = ThisWorkbook.name & " mBasic." & sProc
+    ErrSrc = ThisWorkbook.Name & " mBasic." & sProc
 End Function
 
 Public Function IsCvName(ByVal v As Variant) As Boolean
