@@ -1,4 +1,4 @@
-Attribute VB_Name = "mTest"
+Attribute VB_Name = "mDctTest"
 Option Explicit
 Option Private Module
 
@@ -8,13 +8,13 @@ Public Type tMsgSection                 ' ---------------------
        bMonspaced As Boolean            ' area which consists
 End Type                                ' of 4 message sections
 Public Type tMsg                        ' Attention: 4 is a
-       section(1 To 4) As tMsgSection   ' design constant!
+       Section(1 To 4) As tMsgSection   ' design constant!
 End Type                                ' ---------------------
 
 Private dctTest As Dictionary
 
 Private Function ErrSrc(ByVal sProc As String) As String
-    ErrSrc = ThisWorkbook.name & " mTest." & sProc
+    ErrSrc = ThisWorkbook.Name & " mTest." & sProc
 End Function
 
 Public Sub Test_DctAdd_00_Regression()
@@ -108,7 +108,7 @@ Private Sub Test_DctAdd_02_KeyIsObjectWithNameProperty()
     mTrc.BoP ErrSrc(PROC)
     Set dctTest = Nothing
     For Each vbc In ThisWorkbook.VBProject.VBComponents
-        DctAdd add_dct:=dctTest, add_key:=vbc, add_item:=vbc.name, add_seq:=seq_ascending ' by key case sensitive is the default
+        DctAdd add_dct:=dctTest, add_key:=vbc, add_item:=vbc.Name, add_seq:=seq_ascending ' by key case sensitive is the default
     Next vbc
     Debug.Assert dctTest.Count = ThisWorkbook.VBProject.VBComponents.Count
     Debug.Assert dctTest.Items()(0) = "fMsg"
@@ -116,7 +116,7 @@ Private Sub Test_DctAdd_02_KeyIsObjectWithNameProperty()
     
     '~~ Add an already existing key = update the item
     Set vbc = ThisWorkbook.VBProject.VBComponents("mTest")
-    DctAdd add_dct:=dctTest, add_key:=vbc, add_item:=vbc.name, add_seq:=seq_ascending ' by key case sensitive is the default
+    DctAdd add_dct:=dctTest, add_key:=vbc, add_item:=vbc.Name, add_seq:=seq_ascending ' by key case sensitive is the default
     Debug.Assert dctTest.Count = ThisWorkbook.VBProject.VBComponents.Count
     Debug.Assert dctTest.Items()(0) = "fMsg"
     Debug.Assert dctTest.Items()(dctTest.Count - 1) = "wsDct"
@@ -136,19 +136,19 @@ Private Sub Test_DctAdd_03_ItemIsObjectWithNameProperty()
     mTrc.BoP ErrSrc(PROC)
     Set dctTest = Nothing
     For Each vbc In ThisWorkbook.VBProject.VBComponents
-        DctAdd add_dct:=dctTest, add_key:=vbc.name, add_item:=vbc, add_order:=order_byitem, add_seq:=seq_ascending
+        DctAdd add_dct:=dctTest, add_key:=vbc.Name, add_item:=vbc, add_order:=order_byitem, add_seq:=seq_ascending
     Next vbc
     Debug.Assert dctTest.Count = ThisWorkbook.VBProject.VBComponents.Count
 '    Test_DctAdd_DisplayResult dctTest
-    Debug.Assert dctTest.Items()(0).name = "fMsg"
-    Debug.Assert dctTest.Items()(dctTest.Count - 1).name = "wsDct"
+    Debug.Assert dctTest.Items()(0).Name = "fMsg"
+    Debug.Assert dctTest.Items()(dctTest.Count - 1).Name = "wsDct"
     
     '~~ Add an already existing key = update the item
     Set vbc = ThisWorkbook.VBProject.VBComponents("mTest")
-    DctAdd add_dct:=dctTest, add_key:=vbc.name, add_item:=vbc, add_order:=order_byitem, add_seq:=seq_ascending
+    DctAdd add_dct:=dctTest, add_key:=vbc.Name, add_item:=vbc, add_order:=order_byitem, add_seq:=seq_ascending
     Debug.Assert dctTest.Count = ThisWorkbook.VBProject.VBComponents.Count
-    Debug.Assert dctTest.Items()(0).name = "fMsg"
-    Debug.Assert dctTest.Items()(dctTest.Count - 1).name = "wsDct"
+    Debug.Assert dctTest.Items()(0).Name = "fMsg"
+    Debug.Assert dctTest.Items()(dctTest.Count - 1).Name = "wsDct"
     mTrc.EoP ErrSrc(PROC)
         
 End Sub
@@ -163,18 +163,18 @@ Private Sub Test_DctAdd_04_InsertKeyBefore()
     
     '~~ Preparation
     Test_DctAdd_02_KeyIsObjectWithNameProperty
-    Debug.Assert dctTest.Keys()(0).name = "fMsg"
-    Debug.Assert dctTest.Keys()(1).name = "mDct"
+    Debug.Assert dctTest.Keys()(0).Name = "fMsg"
+    Debug.Assert dctTest.Keys()(1).Name = "mDct"
     Set vbc_second = ThisWorkbook.VBProject.VBComponents("mTrc")
     Set vbc_first = ThisWorkbook.VBProject.VBComponents("mTest")
     dctTest.Remove vbc_second
     Debug.Assert dctTest.Count = ThisWorkbook.VBProject.VBComponents.Count - 1
     
     '~~ Test
-    DctAdd dctTest, vbc_second, vbc_second.name, add_order:=order_bykey, add_seq:=seq_beforetarget, add_target:=vbc_first
+    DctAdd dctTest, vbc_second, vbc_second.Name, add_order:=order_bykey, add_seq:=seq_beforetarget, add_target:=vbc_first
     Debug.Assert dctTest.Count = ThisWorkbook.VBProject.VBComponents.Count
-    Debug.Assert dctTest.Keys()(0).name = "fMsg"
-    Debug.Assert dctTest.Keys()(1).name = "mDct"
+    Debug.Assert dctTest.Keys()(0).Name = "fMsg"
+    Debug.Assert dctTest.Keys()(1).Name = "mDct"
     mTrc.EoP ErrSrc(PROC)
     
 End Sub
@@ -189,18 +189,18 @@ Private Sub Test_DctAdd_05_InsertKeyAfter()
     
     '~~ Preparation
     Test_DctAdd_02_KeyIsObjectWithNameProperty
-    Debug.Assert dctTest.Keys()(0).name = "fMsg"
-    Debug.Assert dctTest.Keys()(1).name = "mDct"
+    Debug.Assert dctTest.Keys()(0).Name = "fMsg"
+    Debug.Assert dctTest.Keys()(1).Name = "mDct"
     Set vbc_first = ThisWorkbook.VBProject.VBComponents(1)
     Set vbc_second = ThisWorkbook.VBProject.VBComponents(2)
     
     '~~ Test
     dctTest.Remove vbc_first
     Debug.Assert dctTest.Count = ThisWorkbook.VBProject.VBComponents.Count - 1
-    DctAdd dctTest, add_key:=vbc_first, add_item:=vbc_first.name, add_order:=order_bykey, add_seq:=seq_aftertarget, add_target:=vbc_second
+    DctAdd dctTest, add_key:=vbc_first, add_item:=vbc_first.Name, add_order:=order_bykey, add_seq:=seq_aftertarget, add_target:=vbc_second
     Debug.Assert dctTest.Count = ThisWorkbook.VBProject.VBComponents.Count
-    Debug.Assert dctTest.Keys()(0).name = "fMsg"
-    Debug.Assert dctTest.Keys()(1).name = "mDct"
+    Debug.Assert dctTest.Keys()(0).Name = "fMsg"
+    Debug.Assert dctTest.Keys()(1).Name = "mDct"
     mTrc.EoP ErrSrc(PROC)
     
 End Sub
@@ -219,14 +219,14 @@ Private Sub Test_DctAdd_06_InsertItemBefore()
     Debug.Assert dctTest.Keys()(1) = "mDct"
     Set vbc_second = ThisWorkbook.VBProject.VBComponents("fMsg")
     Set vbc_first = ThisWorkbook.VBProject.VBComponents("mDct")
-    dctTest.Remove vbc_second.name
+    dctTest.Remove vbc_second.Name
     Debug.Assert dctTest.Count = ThisWorkbook.VBProject.VBComponents.Count - 1
     
     '~~ Test
-    DctAdd dctTest, vbc_second.name, vbc_second, add_order:=order_byitem, add_seq:=seq_beforetarget, add_target:=vbc_first
+    DctAdd dctTest, vbc_second.Name, vbc_second, add_order:=order_byitem, add_seq:=seq_beforetarget, add_target:=vbc_first
     Debug.Assert dctTest.Count = ThisWorkbook.VBProject.VBComponents.Count
-    Debug.Assert dctTest.Items()(0).name = "fMsg"
-    Debug.Assert dctTest.Items()(1).name = "mDct"
+    Debug.Assert dctTest.Items()(0).Name = "fMsg"
+    Debug.Assert dctTest.Items()(1).Name = "mDct"
     mTrc.EoP ErrSrc(PROC)
     
 End Sub
@@ -245,14 +245,14 @@ Private Sub Test_DctAdd_07_InsertItemAfter()
     Debug.Assert dctTest.Keys()(1) = "mDct"
     Set vbc_second = ThisWorkbook.VBProject.VBComponents("mDct")
     Set vbc_first = ThisWorkbook.VBProject.VBComponents("fMsg")
-    dctTest.Remove vbc_first.name
+    dctTest.Remove vbc_first.Name
     Debug.Assert dctTest.Count = ThisWorkbook.VBProject.VBComponents.Count - 1
     
     '~~ Test
-    DctAdd dctTest, vbc_first.name, vbc_first, add_order:=order_byitem, add_seq:=seq_aftertarget, add_target:=vbc_second
+    DctAdd dctTest, vbc_first.Name, vbc_first, add_order:=order_byitem, add_seq:=seq_aftertarget, add_target:=vbc_second
     Debug.Assert dctTest.Count = ThisWorkbook.VBProject.VBComponents.Count
-    Debug.Assert dctTest.Items()(0).name = vbc_second.name
-    Debug.Assert dctTest.Items()(1).name = vbc_first.name
+    Debug.Assert dctTest.Items()(0).Name = vbc_second.Name
+    Debug.Assert dctTest.Items()(1).Name = vbc_first.Name
     mTrc.EoP ErrSrc(PROC)
     
 End Sub
@@ -316,16 +316,16 @@ Public Sub Test_DctAdd_DisplayResult( _
     Dim lItemMax    As Long
     
     For Each v In dct
-        If VarType(v) = vbObject Then sKey = v.name Else sKey = v
+        If VarType(v) = vbObject Then sKey = v.Name Else sKey = v
         lKeyMax = Max(lKeyMax, Len(sKey))
-        If VarType(dct.Item(v)) = vbObject Then sItem = dct.Item(v).name Else sItem = dct.Item(v)
+        If VarType(dct.Item(v)) = vbObject Then sItem = dct.Item(v).Name Else sItem = dct.Item(v)
         lItemMax = Max(lItemMax, Len(sItem))
     Next v
     
     Debug.Print ">> ----- " & s & " --------------"
     For Each v In dct
-        If VarType(v) = vbObject Then sKey = v.name Else sKey = v
-        If VarType(dct.Item(v)) = vbObject Then sItem = dct.Item(v).name Else sItem = dct.Item(v)
+        If VarType(v) = vbObject Then sKey = v.Name Else sKey = v
+        If VarType(dct.Item(v)) = vbObject Then sItem = dct.Item(v).Name Else sItem = dct.Item(v)
         Debug.Print "Key: '" & sKey & "'," & Space(lKeyMax - Len(sKey)) & " Item: '" & sItem & "'"
     Next v
     Debug.Print "<< ----- " & s & " --------------"
@@ -361,4 +361,147 @@ Private Sub Test_DctDiffers()
     mTrc.EoP ErrSrc(PROC)
     
 End Sub
+
+Private Function ErrMsg(ByVal err_source As String, _
+               Optional ByVal err_no As Long = 0, _
+               Optional ByVal err_dscrptn As String = vbNullString, _
+               Optional ByVal err_line As Long = 0) As Variant
+' ------------------------------------------------------------------------------
+' Universal error message display service including a debugging option active
+' when the Conditional Compile Argument 'Debugging = 1' and an optional
+' additional "About the error:" section displaying text connected to an error
+' message by two vertical bars (||).
+'
+' A copy of this function is used in each procedure with an error handling
+' (On error Goto eh).
+'
+' The function considers the Common VBA Error Handling Component (ErH) which
+' may be installed (Conditional Compile Argument 'ErHComp = 1') and/or the
+' Common VBA Message Display Component (mMsg) installed (Conditional Compile
+' Argument 'MsgComp = 1'). Only when none of the two is installed the error
+' message is displayed by means of the VBA.MsgBox.
+'
+' Usage: Example with the Conditional Compile Argument 'Debugging = 1'
+'
+'        Private/Public <procedure-name>
+'            Const PROC = "<procedure-name>"
+'
+'            On Error Goto eh
+'            ....
+'        xt: Exit Sub/Function/Property
+'
+'        eh: Select Case ErrMsg(ErrSrc(PROC))
+'               Case vbResume:  Stop: Resume
+'               Case Else:      GoTo xt
+'            End Select
+'        End Sub/Function/Property
+'
+'        The above may appear a lot of code lines but will be a godsend in case
+'        of an error!
+'
+' Uses:  - For programmed application errors (Err.Raise AppErr(n), ....) the
+'          function AppErr will be used which turns the positive number into a
+'          negative one. The error message will regard a negative error number
+'          as an 'Application Error' and will use AppErr to turn it back for
+'          the message into its original positive number. Together with the
+'          ErrSrc there will be no need to maintain numerous different error
+'          numbers for a VB-Project.
+'        - The caller provides the source of the error through the module
+'          specific function ErrSrc(PROC) which adds the module name to the
+'          procedure name.
+'
+' W. Rauschenberger Berlin, Nov 2021
+' ------------------------------------------------------------------------------
+#If ErHComp = 1 Then
+    '~~ ------------------------------------------------------------------------
+    '~~ When the Common VBA Error Handling Component (mErH) is installed in the
+    '~~ VB-Project (which includes the mMsg component) the mErh.ErrMsg service
+    '~~ is preferred since it provides some enhanced features like a path to the
+    '~~ error.
+    '~~ ------------------------------------------------------------------------
+    ErrMsg = mErH.ErrMsg(err_source, err_no, err_dscrptn, err_line)
+    GoTo xt
+#ElseIf MsgComp = 1 Then
+    '~~ ------------------------------------------------------------------------
+    '~~ When only the Common Message Services Component (mMsg) is installed but
+    '~~ not the mErH component the mMsg.ErrMsg service is preferred since it
+    '~~ provides an enhanced layout and other features.
+    '~~ ------------------------------------------------------------------------
+    ErrMsg = mMsg.ErrMsg(err_source, err_no, err_dscrptn, err_line)
+    GoTo xt
+#End If
+    '~~ -------------------------------------------------------------------
+    '~~ When neither the mMsg nor the mErH component is installed the error
+    '~~ message is displayed by means of the VBA.MsgBox
+    '~~ -------------------------------------------------------------------
+    Dim ErrBttns    As Variant
+    Dim ErrAtLine   As String
+    Dim ErrDesc     As String
+    Dim ErrLine     As Long
+    Dim ErrNo       As Long
+    Dim ErrSrc      As String
+    Dim ErrText     As String
+    Dim ErrTitle    As String
+    Dim ErrType     As String
+    Dim ErrAbout    As String
+        
+    '~~ Obtain error information from the Err object for any argument not provided
+    If err_no = 0 Then err_no = Err.Number
+    If err_line = 0 Then ErrLine = Erl
+    If err_source = vbNullString Then err_source = Err.Source
+    If err_dscrptn = vbNullString Then err_dscrptn = Err.Description
+    If err_dscrptn = vbNullString Then err_dscrptn = "--- No error description available ---"
+    
+    If InStr(err_dscrptn, "||") <> 0 Then
+        ErrDesc = Split(err_dscrptn, "||")(0)
+        ErrAbout = Split(err_dscrptn, "||")(1)
+    Else
+        ErrDesc = err_dscrptn
+    End If
+    
+    '~~ Determine the type of error
+    Select Case err_no
+        Case Is < 0
+            ErrNo = AppErr(err_no)
+            ErrType = "Application Error "
+        Case Else
+            ErrNo = err_no
+            If (InStr(1, err_dscrptn, "DAO") <> 0 _
+            Or InStr(1, err_dscrptn, "ODBC Teradata Driver") <> 0 _
+            Or InStr(1, err_dscrptn, "ODBC") <> 0 _
+            Or InStr(1, err_dscrptn, "Oracle") <> 0) _
+            Then ErrType = "Database Error " _
+            Else ErrType = "VB Runtime Error "
+    End Select
+    
+    If err_source <> vbNullString Then ErrSrc = " in: """ & err_source & """"   ' assemble ErrSrc from available information"
+    If err_line <> 0 Then ErrAtLine = " at line " & err_line                    ' assemble ErrAtLine from available information
+    ErrTitle = Replace(ErrType & ErrNo & ErrSrc & ErrAtLine, "  ", " ")         ' assemble ErrTitle from available information
+       
+    ErrText = "Error: " & vbLf & _
+              ErrDesc & vbLf & vbLf & _
+              "Source: " & vbLf & _
+              err_source & ErrAtLine
+    If ErrAbout <> vbNullString _
+    Then ErrText = ErrText & vbLf & vbLf & _
+                  "About: " & vbLf & _
+                  ErrAbout
+    
+#If Debugging Then
+    ErrBttns = vbYesNo
+    ErrText = ErrText & vbLf & vbLf & _
+              "Debugging:" & vbLf & _
+              "Yes    = Resume Error Line" & vbLf & _
+              "No     = Terminate"
+#Else
+    ErrBttns = vbCritical
+#End If
+    
+    ErrMsg = MsgBox(Title:=ErrTitle _
+                  , Prompt:=ErrText _
+                  , Buttons:=ErrBttns)
+xt: Exit Function
+
+End Function
+
 
