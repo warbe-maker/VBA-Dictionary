@@ -646,7 +646,7 @@ Private Function DctAddItemExists( _
 End Function
 
 Private Function ErrSrc(ByVal sProc As String) As String
-    ErrSrc = ThisWorkbook.Name & " mDct." & sProc
+    ErrSrc = "mDct." & sProc
 End Function
 
 
