@@ -642,44 +642,31 @@ Public Function ErrMsg(ByVal err_source As String, _
               Optional ByVal err_dscrptn As String = vbNullString, _
               Optional ByVal err_line As Long = 0) As Variant
 ' ------------------------------------------------------------------------------
-' Universal error message display service. Displays a debugging option button
-' when the Conditional Compile Argument 'Debugging = 1' and an optional
-' additional "About the error:" section when information is concatenated with
-' the error message by two vertical bars (||).
+' Universal error message display service. See:
+' https://warbe-maker.github.io/vba/common/2022/02/15/Personal-and-public-Common-Components.html
 '
-' May be copied as Private Function into any module. Considers the Common VBA
-' Message Service and the Common VBA Error Services as optional components.
-' When neither is installed the error message is displayed by the VBA.MsgBox.
-'
-' Usage: Example with the Conditional Compile Argument 'Debugging = 1'
-'
-'        Private/Public <procedure-name>
-'            Const PROC = "<procedure-name>"
-'
-'            On Error Goto eh
-'            ....
-'        xt: Exit Sub/Function/Property
-'
-'        eh: Select Case ErrMsg(ErrSrc(PROC))
-'               Case vbResume:  Stop: Resume
-'               Case Else:      GoTo xt
-'            End Select
-'        End Sub/Function/Property
-'
-' Note:  The above may seem to be a lot of code but will be a godsend in case
-'        of an error!
+' - Displays a debugging option button when the Conditional Compile Argument
+'   'Debugging = 1'
+' - Displays an optional additional "About the error:" section when a string is
+'   concatenated with the error message by two vertical bars (||)
+' - Invokes mErH.ErrMsg when the Conditional Compile Argument ErHComp = !
+' - Invokes mMsg.ErrMsg when the Conditional Compile Argument MsgComp = ! (and
+'   the mErH module is not installed / MsgComp not set)
+' - Displays the error message by means of VBA.MsgBox when neither of the two
+'   components is installed
 '
 ' Uses:
 ' - AppErr For programmed application errors (Err.Raise AppErr(n), ....) to
-'          turn tem into negative and in the error mesaage back into a positive
-'          number.
-' - ErrSrc To provide an unambigous procedure name - prefixed by the module name
-'
-' W. Rauschenberger Berlin, Nov 2021
+'          turn them into negative and in the error message back into a
+'          positive number.
+' - ErrSrc To provide an unambiguous procedure name by prefixing is with the
+'          module name.
 '
 ' See:
-' https://warbe-maker.github.io/vba/common/2022/02/15/Personal-and-public-Common-Components.html
-' ------------------------------------------------------------------------------
+' https://github.com/warbe-maker/Common-VBA-Error-Services
+'
+' W. Rauschenberger Berlin, Feb 2022
+' ------------------------------------------------------------------------------' ------------------------------------------------------------------------------
 #If ErHComp = 1 Then
     '~~ When Common VBA Error Services (mErH) is availabel in the VB-Project
     '~~ (which includes the mMsg component) the mErh.ErrMsg service is invoked.
@@ -745,7 +732,6 @@ Public Function ErrMsg(ByVal err_source As String, _
     ErrBttns = vbCritical
 #End If
     ErrMsg = MsgBox(Title:=ErrTitle, Prompt:=ErrText, Buttons:=ErrBttns)
-
 xt:
 End Function
 
@@ -1053,12 +1039,33 @@ eh: Select Case ErrMsg(ErrSrc(PROC))
     End Select
 End Function
 
-Public Sub TimedDoEvents(ByVal tde_source As String)
-    Debug.Print "> DoEvents in '" & tde_source & "'"
+Public Function TimedDoEvents(ByVal tde_source As String) As String
+' ---------------------------------------------------------------------------
+' For the execution of a DoEvents statement. Provides the information in
+' which procedure it had been executed and the msecs delay it has caused.
+'
+' Note: DoEvents every now and then is able to solve timing problems. When
+'       looking at the description of its effect this often appears
+'       miraculous. However, when it helps ... . But DoEvents allow keyboard
+'       interaction while a process executes. In case of a loop - and when
+'       the DoEvents lies within it, this may be a godsend. But it as well
+'       may cause unpredictable results. This little procedure at least
+'       documents in the Immediate window when (with milliseconds) and where
+'       it had been executed.
+' ---------------------------------------------------------------------------
+    Dim s As String
+    
     mBasic.TimerBegin
     DoEvents
-    Debug.Print "< DoEvents in '" & tde_source & "' (" & TimerEnd & " msec elapsed)"
-End Sub
+    s = Format(Now(), "hh:mm:ss") & ":" _
+      & Right(Format(Timer, "0.000"), 3) _
+      & " DoEvents paused the execution for " _
+      & Format(mBasic.TimerEnd, "00000") _
+      & " msecs in '" & tde_source & "'"
+    Debug.Print s
+    TimedDoEvents = s
+    
+End Function
 
 Public Sub TimerBegin()
     cyTimerTicksBegin = TimerSysCurrentTicks

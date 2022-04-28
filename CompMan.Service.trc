@@ -1,121 +1,15 @@
-22-02-16 08:29:38                 >> Update Outdated (by Addin) for Dct.xlsm: 
-22-02-16 08:29:38 00,0000         |  >> mCompMan.UpdateOutdatedCommonComponents
-22-02-16 08:29:39 00,0622         |  |  >> mCompMan.MaintainPropertiesOfHostedRawCommonComponents
-22-02-16 08:29:39 00,1006 00,0385 |  |  << mCompMan.MaintainPropertiesOfHostedRawCommonComponents
-22-02-16 08:29:39 00,1012         |  |  >> mUpdate.Outdated
-22-02-16 08:29:39 00,5309         |  |  |  >> mUpdate.UpdateConfirmed
-22-02-16 08:29:41 03,0006 02,4697 |  |  |  << mUpdate.UpdateConfirmed
-22-02-16 08:29:41 03,0023         |  |  |  >> mRenew.ByImport
-22-02-16 08:29:41 03,0031         |  |  |  |  >> mRenew.SaveWbk
-22-02-16 08:29:42 03,4138 00,4107 |  |  |  |  << mRenew.SaveWbk
-22-02-16 08:29:42 03,4152         |  |  |  |  > Rename the to-be-re-imported component
-22-02-16 08:29:42 03,4194 00,0042 |  |  |  |  < Rename the to-be-re-imported component
-22-02-16 08:29:42 03,4201         |  |  |  |  > Import the Raw Common Component
-22-02-16 08:29:42 03,4280 00,0080 |  |  |  |  < Import the Raw Common Component
-22-02-16 08:29:42 03,4288         |  |  |  |  > Export the Used Common Component
-22-02-16 08:29:42 03,4679 00,0391 |  |  |  |  < Export the Used Common Component
-22-02-16 08:29:42 03,4683         |  |  |  |  >> mRenew.SaveWbk
-22-02-16 08:29:48 09,3863 05,9180 |  |  |  |  << mRenew.SaveWbk
-22-02-16 08:29:48 09,3869 06,3846 |  |  |  << mRenew.ByImport
-22-02-16 08:29:48 09,4133         |  |  |  >> mUpdate.UpdateConfirmed
-22-02-16 08:29:50 11,8900 02,4767 |  |  |  << mUpdate.UpdateConfirmed
-22-02-16 08:29:50 11,8912         |  |  |  >> mRenew.ByImport
-22-02-16 08:29:50 11,8916         |  |  |  |  >> mRenew.SaveWbk
-22-02-16 08:29:51 12,2006 00,3090 |  |  |  |  << mRenew.SaveWbk
-22-02-16 08:29:51 12,2012         |  |  |  |  > Rename the to-be-re-imported component
-22-02-16 08:29:51 12,2033 00,0021 |  |  |  |  < Rename the to-be-re-imported component
-22-02-16 08:29:51 12,2037         |  |  |  |  > Import the Raw Common Component
-22-02-16 08:29:51 12,2057 00,0020 |  |  |  |  < Import the Raw Common Component
-22-02-16 08:29:51 12,2061         |  |  |  |  > Export the Used Common Component
-22-02-16 08:29:51 12,2136 00,0075 |  |  |  |  < Export the Used Common Component
-22-02-16 08:29:51 12,2140         |  |  |  |  >> mRenew.SaveWbk
-22-02-16 08:29:51 12,5363 00,3223 |  |  |  |  << mRenew.SaveWbk
-22-02-16 08:29:51 12,5369 00,6458 |  |  |  << mRenew.ByImport
-22-02-16 08:29:51 12,6071         |  |  |  >> mUpdate.UpdateConfirmed
-22-02-16 08:29:53 14,8247 02,2175 |  |  |  << mUpdate.UpdateConfirmed
-22-02-16 08:29:53 14,8262         |  |  |  >> mRenew.ByImport
-22-02-16 08:29:53 14,8268         |  |  |  |  >> mRenew.SaveWbk
-22-02-16 08:29:54 15,1680 00,3412 |  |  |  |  << mRenew.SaveWbk
-22-02-16 08:29:54 15,1686         |  |  |  |  > Rename the to-be-re-imported component
-22-02-16 08:29:54 15,1710 00,0024 |  |  |  |  < Rename the to-be-re-imported component
-22-02-16 08:29:54 15,1713         |  |  |  |  > Import the Raw Common Component
-22-02-16 08:29:54 15,1813 00,0099 |  |  |  |  < Import the Raw Common Component
-22-02-16 08:29:54 15,1818         |  |  |  |  > Export the Used Common Component
-22-02-16 08:29:54 15,1900 00,0082 |  |  |  |  < Export the Used Common Component
-22-02-16 08:29:54 15,1904         |  |  |  |  >> mRenew.SaveWbk
-22-02-16 08:29:54 15,5613 00,3709 |  |  |  |  << mRenew.SaveWbk
-22-02-16 08:29:54 15,5619 00,7357 |  |  |  << mRenew.ByImport
-22-02-16 08:29:54 15,6267         |  |  |  >> mUpdate.UpdateConfirmed
-22-02-16 08:29:58 19,0992 03,4725 |  |  |  << mUpdate.UpdateConfirmed
-22-02-16 08:29:58 19,1004         |  |  |  >> mRenew.ByImport
-22-02-16 08:29:58 19,1008         |  |  |  |  >> mRenew.SaveWbk
-22-02-16 08:29:58 19,4699 00,3691 |  |  |  |  << mRenew.SaveWbk
-22-02-16 08:29:58 19,4705         |  |  |  |  > Rename the to-be-re-imported component
-22-02-16 08:29:58 19,4733 00,0028 |  |  |  |  < Rename the to-be-re-imported component
-22-02-16 08:29:58 19,4738         |  |  |  |  > Import the Raw Common Component
-22-02-16 08:29:58 19,4778 00,0040 |  |  |  |  < Import the Raw Common Component
-22-02-16 08:29:58 19,4782         |  |  |  |  > Export the Used Common Component
-22-02-16 08:29:58 19,4879 00,0097 |  |  |  |  < Export the Used Common Component
-22-02-16 08:29:58 19,4883         |  |  |  |  >> mRenew.SaveWbk
-22-02-16 08:29:58 19,8127 00,3244 |  |  |  |  << mRenew.SaveWbk
-22-02-16 08:29:58 19,8133 00,7130 |  |  |  << mRenew.ByImport
-22-02-16 08:29:58 19,8722 19,7709 |  |  << mUpdate.Outdated
-22-02-16 08:29:58 19,8733 19,8733 |  << mCompMan.UpdateOutdatedCommonComponents
-22-02-16 08:29:58 19,8733 19,8733 << Update Outdated (by Addin) for Dct.xlsm: . Impact on performance (caused by the trace) was 00,0009 seconds!
-
-22-02-16 10:34:31                 >> Update Outdated (by Addin) for Dct.xlsm: 
-22-02-16 10:34:31 00,0000         |  >> mCompMan.UpdateOutdatedCommonComponents
-22-02-16 10:34:31 00,0487         |  |  >> mCompMan.MaintainPropertiesOfHostedRawCommonComponents
-22-02-16 10:34:31 00,0604 00,0118 |  |  << mCompMan.MaintainPropertiesOfHostedRawCommonComponents
-22-02-16 10:34:31 00,0610         |  |  >> mUpdate.Outdated
-22-02-16 10:34:32 00,4148         |  |  |  >> mUpdate.UpdateConfirmed
-22-02-16 10:34:33 01,8849 01,4700 |  |  |  << mUpdate.UpdateConfirmed
-22-02-16 10:34:33 01,8865         |  |  |  >> mRenew.ByImport
-22-02-16 10:34:33 01,8869         |  |  |  |  >> mRenew.SaveWbk
-22-02-16 10:34:34 02,4465 00,5596 |  |  |  |  << mRenew.SaveWbk
-22-02-16 10:34:34 02,4484         |  |  |  |  > Rename the to-be-re-imported component
-22-02-16 10:34:34 02,4703 00,0219 |  |  |  |  < Rename the to-be-re-imported component
-22-02-16 10:34:34 02,4708         |  |  |  |  > Import the Raw Common Component
-22-02-16 10:34:34 02,4787 00,0079 |  |  |  |  < Import the Raw Common Component
-22-02-16 10:34:34 02,4794         |  |  |  |  > Export the Used Common Component
-22-02-16 10:34:34 02,4916 00,0122 |  |  |  |  < Export the Used Common Component
-22-02-16 10:34:34 02,4924         |  |  |  |  >> mRenew.SaveWbk
-22-02-16 10:34:34 03,0995 00,6072 |  |  |  |  << mRenew.SaveWbk
-22-02-16 10:34:34 03,1004 01,2139 |  |  |  << mRenew.ByImport
-22-02-16 10:34:34 03,1842 03,1232 |  |  << mUpdate.Outdated
-22-02-16 10:34:34 03,1851 03,1851 |  << mCompMan.UpdateOutdatedCommonComponents
-22-02-16 10:34:34 03,1851 03,1851 << Update Outdated (by Addin) for Dct.xlsm: . Impact on performance (caused by the trace) was 00,0008 seconds!
-
-22-02-16 11:26:29                 >> Update Outdated (by Addin) for Dct.xlsm: 
-22-02-16 11:26:29 00,0000         |  >> mCompMan.UpdateOutdatedCommonComponents
-22-02-16 11:26:29 00,1143         |  |  >> mCompMan.MaintainPropertiesOfHostedRawCommonComponents
-22-02-16 11:26:29 00,1266 00,0122 |  |  << mCompMan.MaintainPropertiesOfHostedRawCommonComponents
-22-02-16 11:26:29 00,1271         |  |  >> mUpdate.Outdated
-22-02-16 11:26:29 00,6675         |  |  |  >> mUpdate.UpdateConfirmed
-22-02-16 11:26:31 02,5000 01,8325 |  |  |  << mUpdate.UpdateConfirmed
-22-02-16 11:26:31 02,5015         |  |  |  >> mRenew.ByImport
-22-02-16 11:26:31 02,5021         |  |  |  |  >> mRenew.SaveWbk
-22-02-16 11:26:32 02,9496 00,4474 |  |  |  |  << mRenew.SaveWbk
-22-02-16 11:26:32 02,9507         |  |  |  |  > Rename the to-be-re-imported component
-22-02-16 11:26:32 02,9562 00,0056 |  |  |  |  < Rename the to-be-re-imported component
-22-02-16 11:26:32 02,9568         |  |  |  |  > Import the Raw Common Component
-22-02-16 11:26:32 02,9623 00,0055 |  |  |  |  < Import the Raw Common Component
-22-02-16 11:26:32 02,9628         |  |  |  |  > Export the Used Common Component
-22-02-16 11:26:32 02,9729 00,0101 |  |  |  |  < Export the Used Common Component
-22-02-16 11:26:32 02,9735         |  |  |  |  >> mRenew.SaveWbk
-22-02-16 11:26:32 03,3296 00,3560 |  |  |  |  << mRenew.SaveWbk
-22-02-16 11:26:32 03,3301 00,8286 |  |  |  << mRenew.ByImport
-22-02-16 11:26:32 03,3841 03,2570 |  |  << mUpdate.Outdated
-22-02-16 11:26:32 03,3849 03,3849 |  << mCompMan.UpdateOutdatedCommonComponents
-22-02-16 11:26:32 03,3849 03,3849 << Update Outdated (by Addin) for Dct.xlsm: . Impact on performance (caused by the trace) was 00,0007 seconds!
-
-22-02-16 11:30:11                 >> Export Changed (by Addin) for Dct.xlsm: 
-22-02-16 11:30:11 00,0000         |  >> mCompMan.ExportChangedComponents
-22-02-16 11:30:11 00,1001         |  |  >> mService.ExportChangedComponents
-22-02-16 11:30:11 00,1480         |  |  |  >> mCompMan.MaintainPropertiesOfHostedRawCommonComponents
-22-02-16 11:30:11 00,1603 00,0124 |  |  |  << mCompMan.MaintainPropertiesOfHostedRawCommonComponents
-22-02-16 11:30:11 00,1608         |  |  |  >> mExport.ChangedComponents
-22-02-16 11:30:12 01,1042 00,9434 |  |  |  << mExport.ChangedComponents
-22-02-16 11:30:12 01,1051 01,0049 |  |  << mService.ExportChangedComponents
-22-02-16 11:30:12 01,1058 01,1058 |  << mCompMan.ExportChangedComponents
-22-02-16 11:30:12 01,1058 01,1058 << Export Changed (by Addin) for Dct.xlsm: . Impact on performance (caused by the trace) was 00,0006 seconds!
+22-04-28 16:23:57 Execution trace by 'Common VBA Execution Trace Service' (https://github.com/warbe-maker/Common-VBA-Execution-Trace-Service)
+22-04-28 16:23:57                 >> Export Changed (by Addin) for Dct.xlsm: 
+22-04-28 16:23:57 00,0000         |  >> mCompMan.ExportChangedComponents
+22-04-28 16:23:57 00,0408         |  |  >> mService.ExportChangedComponents
+22-04-28 16:23:57 00,0744         |  |  |  >> mCompMan.MaintainPropertiesOfHostedRawCommonComponents
+22-04-28 16:23:57 00,0915 00,0171 |  |  |  << mCompMan.MaintainPropertiesOfHostedRawCommonComponents
+22-04-28 16:23:57 00,0969         |  |  |  >> mExport.ChangedComponents
+22-04-28 16:23:58 00,8161         |  |  |  |  >> mService.RemoveTempRenamed
+22-04-28 16:23:58 00,8221 00,0060 |  |  |  |  << mService.RemoveTempRenamed
+22-04-28 16:23:58 00,8271 00,7303 |  |  |  << mExport.ChangedComponents
+22-04-28 16:23:58 00,8322 00,7914 |  |  << mService.ExportChangedComponents
+22-04-28 16:23:58 00,8377 00,8377 |  << mCompMan.ExportChangedComponents
+22-04-28 16:23:58 00,8377 00,8377 << Export Changed (by Addin) for Dct.xlsm: 
+22-04-28 16:23:58                 Impact on the overall performance (caused by the trace itself): 00,0054 seconds!
+22-04-28 16:23:58 Execution trace by 'Common VBA Execution Trace Service' (https://github.com/warbe-maker/Common-VBA-Execution-Trace-Service)
