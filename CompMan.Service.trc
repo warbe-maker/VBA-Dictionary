@@ -1,12 +1,12 @@
-22-05-18 10:29:33 02,6963         |  >> mCompMan.UpdateOutdatedCommonComponents
-22-05-18 10:29:33 02,6971         |  |  >> mCompMan.MaintainPropertiesOfHostedRawCommonComponents
-22-05-18 10:29:33 02,7234 00,0262 |  |  << mCompMan.MaintainPropertiesOfHostedRawCommonComponents
-22-05-18 10:29:33 02,7303         |  |  >> mUpdate.Outdated
-22-05-18 10:29:33 02,7733         |  |  |  >> mService.SaveWbk
-22-05-18 10:29:33 03,4975 00,7242 |  |  |  << mService.SaveWbk
-22-05-18 10:29:34 03,7431 01,0128 |  |  << mUpdate.Outdated
-22-05-18 10:29:34 03,7732 01,0769 |  << mCompMan.UpdateOutdatedCommonComponents
-22-05-18 10:29:34 03,8239 03,8239 << mRenew.Run
-22-05-18 10:29:34 03,8239 03,8239 << Update Outdated (by Addin) for Dct.xlsm: 
-22-05-18 10:29:34                 Impact on the overall performance (caused by the trace itself): 00,0441 seconds!
-22-05-18 10:29:34 Execution trace by 'Common VBA Execution Trace Service' (https://github.com/warbe-maker/Common-VBA-Execution-Trace-Service)
+22-05-20 19:17:43 02,5131         |  >> mCompMan.UpdateOutdatedCommonComponents
+22-05-20 19:17:43 02,5138         |  |  >> mCompMan.MaintainPropertiesOfHostedRawCommonComponents
+22-05-20 19:17:43 02,5364 00,0226 |  |  << mCompMan.MaintainPropertiesOfHostedRawCommonComponents
+22-05-20 19:17:43 02,5415         |  |  >> mRenew.Outdated
+22-05-20 19:17:43 02,5796         |  |  |  >> mService.SaveWbk
+22-05-20 19:17:43 03,0607 00,4810 |  |  |  << mService.SaveWbk
+22-05-20 19:17:43 03,2873 00,7459 |  |  << mRenew.Outdated
+22-05-20 19:17:43 03,3043 00,7912 |  << mCompMan.UpdateOutdatedCommonComponents
+22-05-20 19:17:43 03,3292 03,3292 << mRenew.Run
+22-05-20 19:17:43 03,3292 03,3292 << Update Outdated (by Addin) for Dct.xlsm: 
+22-05-20 19:17:43                 Impact on the overall performance (caused by the trace itself): 00,0249 seconds!
+22-05-20 19:17:43 Execution trace by 'Common VBA Execution Trace Service' (https://github.com/warbe-maker/Common-VBA-Execution-Trace-Service)
