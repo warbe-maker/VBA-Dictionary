@@ -13,10 +13,6 @@ End Type                                ' ---------------------
 
 Private dctTest As Dictionary
 
-Private Function ErrSrc(ByVal sProc As String) As String
-    ErrSrc = "mDctTest." & sProc
-End Function
-
 Private Function AppErr(ByVal app_err_no As Long) As Long
 ' ------------------------------------------------------------------------------
 ' Ensures that a programmed 'Application' error number not conflicts with the
@@ -84,7 +80,6 @@ Private Sub EoP(ByVal e_proc As String, _
     mTrc.EoP e_proc, e_inf
 #End If
 End Sub
-
 
 Private Function ErrMsg(ByVal err_source As String, _
                Optional ByVal err_no As Long = 0, _
@@ -154,7 +149,7 @@ Private Function ErrMsg(ByVal err_source As String, _
     '~~ Obtain error information from the Err object for any argument not provided
     If err_no = 0 Then err_no = Err.Number
     If err_line = 0 Then ErrLine = Erl
-    If err_source = vbNullString Then err_source = Err.source
+    If err_source = vbNullString Then err_source = Err.Source
     If err_dscrptn = vbNullString Then err_dscrptn = Err.Description
     If err_dscrptn = vbNullString Then err_dscrptn = "--- No error description available ---"
     
@@ -198,6 +193,10 @@ Private Function ErrMsg(ByVal err_source As String, _
 xt:
 End Function
 
+Private Function ErrSrc(ByVal sProc As String) As String
+    ErrSrc = "mDctTest." & sProc
+End Function
+
 Public Sub Test_00_Regression()
 ' ------------------------------------------------------------------------------
 ' Attention! This Regression tes takes about 30 seconds due to the included
@@ -231,45 +230,6 @@ Public Sub Test_00_Regression()
 xt: mErH.Regression = False
     EoP ErrSrc(PROC)
     mTrc.Dsply
-    Exit Sub
-
-eh: Select Case ErrMsg(ErrSrc(PROC))
-        Case vbResume:  Stop: Resume
-        Case Else:      GoTo xt
-    End Select
-End Sub
-
-Private Sub Test_10_DctAdd_AddDuplicate_Item()
-' ----------------------------------------------------------------------------
-' When add criteria is by item, the item already exists but with a different
-' key and staywithfirst = False (the default) the item is added.
-' ----------------------------------------------------------------------------
-    Const PROC = "Test_10_DctAdd_AddDuplicate_Item"
-
-    On Error GoTo eh
-    BoP ErrSrc(PROC)
-    
-    Set dctTest = Nothing
-    DctAdd add_dct:=dctTest, add_key:="A", add_item:=60, add_order:=order_byitem, add_seq:=seq_ascending
-    DctAdd add_dct:=dctTest, add_key:="BB", add_item:=50, add_order:=order_byitem, add_seq:=seq_ascending
-    DctAdd add_dct:=dctTest, add_key:="CCC", add_item:=30, add_order:=order_byitem, add_seq:=seq_ascending
-    DctAdd add_dct:=dctTest, add_key:="DDDD", add_item:=30, add_order:=order_byitem, add_seq:=seq_ascending
-    DctAdd add_dct:=dctTest, add_key:="EEEEE", add_item:=20, add_order:=order_byitem, add_seq:=seq_ascending
-    DctAdd add_dct:=dctTest, add_key:="FFFFFF", add_item:=10, add_order:=order_byitem, add_seq:=seq_ascending
-'    Test_DisplayResult dctTest, "staywithfirst=False"
-    Debug.Assert dctTest.Count = 6
-    
-    Set dctTest = Nothing
-    DctAdd add_dct:=dctTest, add_key:="A", add_item:=60, add_order:=order_byitem, add_seq:=seq_ascending, add_staywithfirst:=True
-    DctAdd add_dct:=dctTest, add_key:="BB", add_item:=50, add_order:=order_byitem, add_seq:=seq_ascending, add_staywithfirst:=True
-    DctAdd add_dct:=dctTest, add_key:="CCC", add_item:=30, add_order:=order_byitem, add_seq:=seq_ascending, add_staywithfirst:=True
-    DctAdd add_dct:=dctTest, add_key:="DDDD", add_item:=30, add_order:=order_byitem, add_seq:=seq_ascending, add_staywithfirst:=True
-    DctAdd add_dct:=dctTest, add_key:="EEEEE", add_item:=20, add_order:=order_byitem, add_seq:=seq_ascending, add_staywithfirst:=True
-    DctAdd add_dct:=dctTest, add_key:="FFFFFF", add_item:=10, add_order:=order_byitem, add_seq:=seq_ascending, add_staywithfirst:=True
-'    Test_DisplayResult dctTest, "staywithfirst=True"
-    Debug.Assert dctTest.Count = 5
-    
-xt: EoP ErrSrc(PROC)
     Exit Sub
 
 eh: Select Case ErrMsg(ErrSrc(PROC))
@@ -588,6 +548,212 @@ eh: Select Case ErrMsg(ErrSrc(PROC))
     End Select
 End Sub
 
+Private Sub Test_10_DctAdd_AddDuplicate_Item()
+' ----------------------------------------------------------------------------
+' When add criteria is by item, the item already exists but with a different
+' key and staywithfirst = False (the default) the item is added.
+' ----------------------------------------------------------------------------
+    Const PROC = "Test_10_DctAdd_AddDuplicate_Item"
+
+    On Error GoTo eh
+    BoP ErrSrc(PROC)
+    
+    Set dctTest = Nothing
+    DctAdd add_dct:=dctTest, add_key:="A", add_item:=60, add_order:=order_byitem, add_seq:=seq_ascending
+    DctAdd add_dct:=dctTest, add_key:="BB", add_item:=50, add_order:=order_byitem, add_seq:=seq_ascending
+    DctAdd add_dct:=dctTest, add_key:="CCC", add_item:=30, add_order:=order_byitem, add_seq:=seq_ascending
+    DctAdd add_dct:=dctTest, add_key:="DDDD", add_item:=30, add_order:=order_byitem, add_seq:=seq_ascending
+    DctAdd add_dct:=dctTest, add_key:="EEEEE", add_item:=20, add_order:=order_byitem, add_seq:=seq_ascending
+    DctAdd add_dct:=dctTest, add_key:="FFFFFF", add_item:=10, add_order:=order_byitem, add_seq:=seq_ascending
+'    Test_DisplayResult dctTest, "staywithfirst=False"
+    Debug.Assert dctTest.Count = 6
+    
+    Set dctTest = Nothing
+    DctAdd add_dct:=dctTest, add_key:="A", add_item:=60, add_order:=order_byitem, add_seq:=seq_ascending, add_staywithfirst:=True
+    DctAdd add_dct:=dctTest, add_key:="BB", add_item:=50, add_order:=order_byitem, add_seq:=seq_ascending, add_staywithfirst:=True
+    DctAdd add_dct:=dctTest, add_key:="CCC", add_item:=30, add_order:=order_byitem, add_seq:=seq_ascending, add_staywithfirst:=True
+    DctAdd add_dct:=dctTest, add_key:="DDDD", add_item:=30, add_order:=order_byitem, add_seq:=seq_ascending, add_staywithfirst:=True
+    DctAdd add_dct:=dctTest, add_key:="EEEEE", add_item:=20, add_order:=order_byitem, add_seq:=seq_ascending, add_staywithfirst:=True
+    DctAdd add_dct:=dctTest, add_key:="FFFFFF", add_item:=10, add_order:=order_byitem, add_seq:=seq_ascending, add_staywithfirst:=True
+'    Test_DisplayResult dctTest, "staywithfirst=True"
+    Debug.Assert dctTest.Count = 5
+    
+xt: EoP ErrSrc(PROC)
+    Exit Sub
+
+eh: Select Case ErrMsg(ErrSrc(PROC))
+        Case vbResume:  Stop: Resume
+        Case Else:      GoTo xt
+    End Select
+End Sub
+
+Private Sub Test_20_DctDiffers_InKeysAsObject()
+' ----------------------------------------------------------------------------
+' Precondition: DctAdd is tested
+' ----------------------------------------------------------------------------
+    Const PROC = "Test_20_DctDiffers_InKeysAsObject"
+    
+    On Error GoTo eh
+    Dim dct1 As Dictionary
+    Dim dct2 As Dictionary
+    Dim vbc  As VBComponent
+    
+    BoP ErrSrc(PROC)
+    Set dct1 = Nothing
+    Set dct2 = Nothing
+    For Each vbc In ThisWorkbook.VBProject.VBComponents
+        DctAdd add_dct:=dct1, add_key:=vbc, add_item:=vbc, add_seq:=seq_ascending ' by key case sensitive is the default
+    Next vbc
+    For Each vbc In ThisWorkbook.VBProject.VBComponents
+        DctAdd add_dct:=dct2, add_key:=vbc, add_item:=vbc, add_seq:=seq_ascending ' by key case sensitive is the default
+    Next vbc
+    
+    '~~ Test: Differs in keys
+    Debug.Assert Not DctDiffers(dct1, dct2)
+    dct1.Remove ThisWorkbook.VBProject.VBComponents("mDctTest")
+    dct2.Remove ThisWorkbook.VBProject.VBComponents("mBasic")
+    Debug.Assert DctDiffers(dd_dct1:=dct1 _
+                          , dd_dct2:=dct2 _
+                          , dd_diff_items:=False _
+                          , dd_diff_keys:=True)
+    Set dct1 = Nothing
+    Set dct2 = Nothing
+        
+xt: EoP ErrSrc(PROC)
+    Exit Sub
+
+eh: Select Case ErrMsg(ErrSrc(PROC))
+        Case vbResume:  Stop: Resume
+        Case Else:      GoTo xt
+    End Select
+End Sub
+
+Private Sub Test_21_DctDiffers_InItemsAsObject()
+' ----------------------------------------------------------------------------
+' Precondition: DctAdd is tested
+' ----------------------------------------------------------------------------
+    Const PROC = "Test_21_DctDiffers_InItemsAsObject"
+    
+    On Error GoTo eh
+    Dim dct1 As Dictionary
+    Dim dct2 As Dictionary
+    Dim vbc  As VBComponent
+    
+    BoP ErrSrc(PROC)
+    Set dct1 = Nothing
+    Set dct2 = Nothing
+    For Each vbc In ThisWorkbook.VBProject.VBComponents
+        DctAdd add_dct:=dct1, add_key:=vbc, add_item:=vbc, add_seq:=seq_ascending ' by key case sensitive is the default
+    Next vbc
+    For Each vbc In ThisWorkbook.VBProject.VBComponents
+        DctAdd add_dct:=dct2, add_key:=vbc, add_item:=vbc, add_seq:=seq_ascending ' by key case sensitive is the default
+    Next vbc
+    
+    '~~ Test: Differs in keys
+    Debug.Assert Not DctDiffers(dct1, dct2)
+    dct1.Remove ThisWorkbook.VBProject.VBComponents("mDctTest")
+    dct2.Remove ThisWorkbook.VBProject.VBComponents("mBasic")
+    Debug.Assert DctDiffers(dd_dct1:=dct1 _
+                          , dd_dct2:=dct2 _
+                          , dd_diff_items:=True _
+                          , dd_diff_keys:=False)
+    Set dct1 = Nothing
+    Set dct2 = Nothing
+        
+xt: EoP ErrSrc(PROC)
+    Exit Sub
+
+eh: Select Case ErrMsg(ErrSrc(PROC))
+        Case vbResume:  Stop: Resume
+        Case Else:      GoTo xt
+    End Select
+End Sub
+
+Private Sub Test_22_DctDiffers_InItemsAsString()
+' ----------------------------------------------------------------------------
+' Precondition: DctAdd is tested
+' ----------------------------------------------------------------------------
+    Const PROC = "Test_21_DctDiffers_InItemsAsObject"
+    
+    On Error GoTo eh
+    Dim dct1    As Dictionary
+    Dim dct2    As Dictionary
+    Dim vbc     As VBComponent
+    Dim v       As Variant
+    Dim i       As Long
+    
+    BoP ErrSrc(PROC)
+    
+    '~~ Prepare
+    Set dct1 = Nothing
+    Set dct2 = Nothing
+    With ThisWorkbook.VBProject.VBComponents("mBasic").CodeModule
+        For i = 1 To .CountOfLines
+            DctAdd add_dct:=dct1, add_key:=i, add_item:=.Lines(i, 1)
+        Next i
+    End With
+    With ThisWorkbook.VBProject.VBComponents("mBasic").CodeModule
+        For i = 1 To .CountOfLines
+            DctAdd add_dct:=dct2, add_key:=i, add_item:=.Lines(i, 1)
+        Next i
+    End With
+    
+    '~~ Test and assert
+    Debug.Assert DctDiffers(dd_dct1:=dct1 _
+                          , dd_dct2:=dct2 _
+                          , dd_diff_items:=True _
+                          , dd_diff_keys:=False) = False
+    
+    Debug.Assert DctDiffers(dd_dct1:=dct1 _
+                          , dd_dct2:=dct2 _
+                          , dd_diff_items:=True _
+                          , dd_diff_keys:=False _
+                          , dd_ignore_items_empty:=True) = False
+    
+    '~~ Prepare
+    Set dct1 = Nothing
+    Set dct2 = Nothing
+    With ThisWorkbook.VBProject.VBComponents("mBasic").CodeModule
+        For i = 1 To .CountOfLines
+            DctAdd add_dct:=dct1, add_key:=i, add_item:=.Lines(i, 1)
+        Next i
+    End With
+    With ThisWorkbook.VBProject.VBComponents("mBasic").CodeModule
+        For i = 1 To .CountOfLines
+            DctAdd add_dct:=dct2, add_key:=i, add_item:=.Lines(i, 1)
+        Next i
+    End With
+    
+    Debug.Print dct1.Count
+    Debug.Print dct2.Count
+    mDct.RemoveEmptyItems dct1
+    Debug.Print dct1.Count
+    Debug.Print dct2.Count
+    
+    Debug.Assert DctDiffers(dd_dct1:=dct1 _
+                          , dd_dct2:=dct2 _
+                          , dd_diff_items:=True _
+                          , dd_diff_keys:=False _
+                          , dd_ignore_items_empty:=False) = True
+    
+    Debug.Assert DctDiffers(dd_dct1:=dct1 _
+                          , dd_dct2:=dct2 _
+                          , dd_diff_items:=True _
+                          , dd_diff_keys:=False _
+                          , dd_ignore_items_empty:=True) = False
+    
+    Set dct1 = Nothing
+    Set dct2 = Nothing
+        
+xt: EoP ErrSrc(PROC)
+    Exit Sub
+
+eh: Select Case ErrMsg(ErrSrc(PROC))
+        Case vbResume:  Stop: Resume
+        Case Else:      GoTo xt
+    End Select
+End Sub
+
 Private Sub Test_99_DctAdd_Performance()
 ' ----------------------------------------------------------------------------
 '
@@ -649,43 +815,4 @@ eh: Select Case ErrMsg(ErrSrc(PROC))
         Case Else:      GoTo xt
     End Select
 End Sub
-
-Private Sub Test_DctDiffers()
-' ----------------------------------------------------------------------------
-' Precondition: DctAdd is tested
-' ----------------------------------------------------------------------------
-    Const PROC = "Test_DctDiffers"
-    
-    On Error GoTo eh
-    Dim dct1 As Dictionary
-    Dim dct2 As Dictionary
-    Dim vbc  As VBComponent
-    
-    BoP ErrSrc(PROC)
-    Set dct1 = Nothing
-    Set dct2 = Nothing
-    For Each vbc In ThisWorkbook.VBProject.VBComponents
-        DctAdd add_dct:=dct1, add_key:=vbc, add_item:=vbc, add_seq:=seq_ascending ' by key case sensitive is the default
-    Next vbc
-    For Each vbc In ThisWorkbook.VBProject.VBComponents
-        DctAdd add_dct:=dct2, add_key:=vbc, add_item:=vbc, add_seq:=seq_ascending ' by key case sensitive is the default
-    Next vbc
-    
-    '~~ Test: Differs in keys
-    Debug.Assert Not DctDiffers(dct1, dct2)
-    dct1.Remove ThisWorkbook.VBProject.VBComponents("mTest")
-    dct2.Remove ThisWorkbook.VBProject.VBComponents("mBasic")
-    Debug.Assert DctDiffers(dct1, dct2)
-    Set dct1 = Nothing
-    Set dct2 = Nothing
-        
-xt: EoP ErrSrc(PROC)
-    Exit Sub
-
-eh: Select Case ErrMsg(ErrSrc(PROC))
-        Case vbResume:  Stop: Resume
-        Case Else:      GoTo xt
-    End Select
-End Sub
-
 
