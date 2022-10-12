@@ -60,7 +60,7 @@ Const DFLT_TXT_MONOSPACED_FONT_SIZE As Single = 10              ' Default monosp
 Const DFLT_TXT_PROPSPACED_FONT_NAME As String = "Tahoma"        ' Default proportional spaced font name
 Const DFLT_TXT_PROPSPACED_FONT_SIZE As Single = 10              ' Default proportional spaced font size
 Const HSPACE_BTTN_AREA              As Single = 15              ' Minimum left and right margin for the centered buttons area
-Const HSPACE_BTTNS                As Single = 4               ' Horizontal space between reply buttons
+Const HSPACE_BTTNS                  As Single = 4               ' Horizontal space between reply buttons
 Const HSPACE_LEFT                   As Single = 0               ' Left margin for labels and text boxes
 Const HSPACE_RIGHT                  As Single = 15              ' Horizontal right space for labels and text boxes
 Const HSPACE_LEFTRIGHT_BUTTONS      As Long = 8                 ' The margin before the left most and after the right most button
@@ -540,15 +540,9 @@ Public Property Let NewHeight(Optional ByRef nh_frame_form As Object, _
     If Not IsFrameOrForm(nh_frame_form) _
     Then Err.Raise AppErr(1), ErrSrc(PROC), "The provided argument is neither a Frame nor a Form!"
         
-'    Debug.Print "nh_frame_form.Name   = " & nh_frame_form.Name
-'    Debug.Print "nh_frame_form.Height = " & nh_frame_form.Height
-'    Debug.Print "siContentHeight      = " & siContentHeight
     nh_frame_form.Height = nh_height
-'    Debug.Print "New frame height     = " & nh_frame_form.Height
-'    Debug.Print "V-Scroll             = " & ScrollVscrollApplied(nh_frame_form)
     
     If siContentHeight - nh_frame_form.Height > nh_threshold_height_diff Then
-        Debug.Print "apply a vertical scroll-bar for " & nh_frame_form.Name
         ScrollVscrollApply sva_frame_form:=nh_frame_form, sva_content_height:=siContentHeight, sva_y_action:=nh_y_action
     ElseIf ScrollVscrollApplied(nh_frame_form) Then
         ScrollVscrollRemove nh_frame_form
@@ -578,12 +572,7 @@ Private Property Let NewWidth(Optional ByRef nw_frame_form As Object, _
     If nw_frame_form Is Nothing Then Err.Raise AppErr(1), ErrSrc(PROC), "The required argument 'nw_frame_form' is Nothing!"
     If Not IsFrameOrForm(nw_frame_form) Then Err.Raise AppErr(2), ErrSrc(PROC), "The provided argument 'nw_frame_form' is neither a Frame nor a Form!"
     
-'    Debug.Print "nw_frame_form.Name  = " & nw_frame_form.Name
-'    Debug.Print "nw_frame_form.Width = " & nw_frame_form.Width
-'    Debug.Print "siContentWidth      = " & siContentWidth
     nw_frame_form.Width = nw_width
-'    Debug.Print "New frame width     = " & nw_frame_form.Width
-'    Debug.Print "H-Scroll            = " & ScrollHscrollApplied(nw_frame_form)
 
     If siContentWidth - nw_frame_form.Width > nw_threshold_width_diff Then
         ScrollHscrollApply sha_frame_form:=nw_frame_form, sha_content_width:=siContentWidth
@@ -600,9 +589,7 @@ Public Property Get NoOfDesignedMsgSects() As Long ' -----------------------
     NoOfDesignedMsgSects = lNoOfDesignedMsgSects   ' Global definition !!!!!
 End Property                                       ' -----------------------
 
-Private Property Let NoOfDesignedMsgSects(ByVal l As Long)
-    lNoOfDesignedMsgSects = l
-End Property
+Private Property Let NoOfDesignedMsgSects(ByVal l As Long):  lNoOfDesignedMsgSects = l:                             End Property
 
 Private Property Get PrcntgHeightfrmBttnsArea() As Single
     PrcntgHeightfrmBttnsArea = Round(frmBttnsArea.Height / (frmMsectsArea.Height + frmBttnsArea.Height), 2)
@@ -612,11 +599,9 @@ Private Property Get PrcntgHeightMsgArea() As Single
     PrcntgHeightMsgArea = Round(frmMsectsArea.Height / (frmMsectsArea.Height + frmBttnsArea.Height), 2)
 End Property
 
-'Public Property Get ReplyValue() As Variant:                ReplyValue = vReplyValue:                                   End Property
+Public Property Let ReplyWithIndex(ByVal b As Boolean):     bReplyWithIndex = b:                                    End Property
 
-Public Property Let ReplyWithIndex(ByVal b As Boolean):     bReplyWithIndex = b:                                        End Property
-
-Public Property Let SetupDone(ByVal b As Boolean):          bSetUpDone = b:         End Property
+Public Property Let SetupDone(ByVal b As Boolean):          bSetUpDone = b:                                         End Property
 
 Private Property Get SysFrequency() As Currency
     If TimerSystemFrequency = 0 Then getFrequency TimerSystemFrequency
@@ -1245,7 +1230,6 @@ Private Sub Collect(ByRef col_into As Variant, _
                         Case "Dictionary"
                             i = col_into.Count + 1
                             col_into.Add i, ctl
-'                            Debug.Print col_into.Count & ": " & ctl.Name
                         Case Else
                             Set col_into = ctl
                             Exit For
@@ -1346,7 +1330,6 @@ Private Sub CollectDesignControls()
             Set cmb = frm.Controls(lBttn)
             sKey = lRow & "-" & lBttn + 1
             dctBttns.Add sKey, cmb
-'            Debug.Print "Button " & sKey & ": " & cmb.Name
         Next lBttn
     Next lRow
     
@@ -1634,13 +1617,11 @@ Private Function IsUserForm(ByVal is_obj As Object) As Boolean
       IsUserForm = TypeOf is_obj Is MSForms.UserForm
 End Function
 
-Private Sub laMsgSection1Labe2_Click():     OpenClickedLabelItem 2: End Sub
-
-Private Sub laMsgSection1Labe3_Click():     OpenClickedLabelItem 3: End Sub
-
-Private Sub laMsgSection1Labe4_Click():     OpenClickedLabelItem 4: End Sub
-
 Private Sub laMsgSection1Label_Click():     OpenClickedLabelItem 1: End Sub
+Private Sub laMsgSection2Label_Click():     OpenClickedLabelItem 2: End Sub
+Private Sub laMsgSection3Label_Click():     OpenClickedLabelItem 3: End Sub
+Private Sub laMsgSection4Label_Click():     OpenClickedLabelItem 4: End Sub
+Private Sub laMsgSection5Label_Click():     OpenClickedLabelItem 5: End Sub
 
 Private Sub laMsgSection1Label_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single):        HandCursorForLink 1:    End Sub
 
@@ -1649,6 +1630,8 @@ Private Sub laMsgSection2Label_MouseMove(ByVal Button As Integer, ByVal Shift As
 Private Sub laMsgSection3Label_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single):        HandCursorForLink 3:    End Sub
 
 Private Sub laMsgSection4Label_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single):        HandCursorForLink 4:    End Sub
+
+Private Sub laMsgSection5Label_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single):        HandCursorForLink 5:    End Sub
 
 Private Function Max(ParamArray va() As Variant) As Variant
 ' ----------------------------------------------------------------------------
@@ -2199,11 +2182,11 @@ Private Sub OpenClickedLabelItem(ByVal oc_section As Long)
 End Sub
 
 Private Function GetPanesIndex(ByVal Rng As Range) As Integer
-    Dim sR As Long:          sR = ActiveWindow.SplitRow
-    Dim sc As Long:          sc = ActiveWindow.SplitColumn
-    Dim r As Long:            r = Rng.row
-    Dim c As Long:            c = Rng.Column
-    Dim Index As Integer: Index = 1
+    Dim sR As Long:            sR = ActiveWindow.SplitRow
+    Dim sc As Long:            sc = ActiveWindow.SplitColumn
+    Dim r As Long:              r = Rng.row
+    Dim c As Long:              c = Rng.Column
+    Dim Index As Integer:   Index = 1
 
     Select Case True
     Case sR = 0 And sc = 0: Index = 1
@@ -2389,7 +2372,6 @@ Private Sub ScrollHscrollApply(ByRef sha_frame_form As Variant, _
         
     With sha_frame_form
         If Not ScrollHscrollApplied(sha_frame_form) Then
-            Debug.Print "apply a horizontal scroll-bar for " & sha_frame_form.Name
             Select Case .ScrollBars
                 Case fmScrollBarsBoth
                     .KeepScrollBarsVisible = fmScrollBarsBoth
@@ -2501,8 +2483,6 @@ Private Sub ScrollVscrollApply(ByRef sva_frame_form As Variant, _
             .Width = ContentWidth(sva_frame_form) + ScrollVscrollWidth(sva_frame_form)
         End If
     End With
-    Debug.Print "Height Frame   = " & sva_frame_form.Height
-    Debug.Print "Height Scroll  = " & sva_content_height
 
 xt: Exit Sub
     
@@ -2623,14 +2603,11 @@ Private Sub ScrollVscrollWhereApplicable()
                 ScrollVscrollMsgSectionOrArea TotalExceedingHeight
             ElseIf PrcntgHeightfrmBttnsArea >= 0.6 Then
                 '~~ Only the buttons area will be reduced and applied with a vertical scrollbar.
-'                Debug.Print frmBttnsArea.Height - TotalExceedingHeight
                 NewHeight(frmBttnsArea) = frmBttnsArea.Height - TotalExceedingHeight
             Else
                 '~~ Both, the message area and the buttons area will be
                 '~~ height reduced proportionally and applied with a vertical scrollbar
-'                Debug.Print frmMsectsArea.Height - (TotalExceedingHeight * PrcntgHeightMsgArea)
                 NewHeight(frmMsectsArea) = frmMsectsArea.Height - (TotalExceedingHeight * PrcntgHeightMsgArea)
-'                Debug.Print frmBttnsArea.Height - (TotalExceedingHeight * PrcntgHeightfrmBttnsArea)
                 NewHeight(frmBttnsArea) = frmBttnsArea.Height - (TotalExceedingHeight * PrcntgHeightfrmBttnsArea)
             End If
         End With
@@ -3022,7 +2999,6 @@ Private Sub SetupMsgSect()
                 
         If MsgSectLbl.Text <> vbNullString Then
             MsectLbl.Visible = True
-'            Debug.Print MsectLbl.Name
             With MsectLbl
                 .Left = 10
                 .Width = Me.InsideWidth - (siHmarginFrames * 2)
@@ -3160,7 +3136,6 @@ Private Sub SetupMsgSectPropSpaced(Optional ByVal msg_append As Boolean = False,
     frmMsectsArea.Width = Me.InsideWidth
     MsectFrm.Width = frmMsectsArea.Width
     MsectTbxFrm.Width = MsectFrm.Width - 5
-'    Debug.Print "MsectTbxFrm.Width = " & MsectTbxFrm.Width
     
     frmBttnsArea.Top = frmMsectsArea.Top + frmMsectsArea.Height + 20
     Me.Height = frmBttnsArea.Top + frmBttnsArea.Height + 20
@@ -3460,7 +3435,7 @@ Private Sub VisualizeSetupStep(ByVal vss_status As String)
             .Top = 10
             .Left = 10
             Application.StatusBar = "Setup step visualization for debug and test: " & vss_status
-            Stop
+'            Stop
         End If
     End With
 End Sub
@@ -3488,7 +3463,6 @@ Private Function TimedDoEvents(ByVal tde_source As String) As String
       & " DoEvents paused the execution for " _
       & Format(TimerEnd, "00000") _
       & " msecs in '" & tde_source & "'"
-'    Debug.Print s
     TimedDoEvents = s
     
 End Function
@@ -3516,14 +3490,11 @@ Private Sub ApplicationRunViaButton(ByVal ar_button As String)
     Dim sButton     As String
     
     sButton = Replace(Replace(ar_button, vbCrLf, "|"), vbLf, "|")
-    Debug.Print "Button:   '" & sButton & "'"
     For i = 0 To dctApplicationRunArgs.Count - 1
         sKey = Replace(Replace(dctApplicationRunArgs.Keys()(i), vbCrLf, "|"), vbLf, "|")
         If sKey = sButton Then
             Set cll = dctApplicationRunArgs.Items()(i)
             sService = cll(1).Name & "!" & cll(2)
-            Debug.Print "Key     : '" & sKey & "'"
-            Debug.Print "sService:   " & sService
             
             Select Case cll.Count
                 Case 2: Application.Run sService                 ' service call without arguments

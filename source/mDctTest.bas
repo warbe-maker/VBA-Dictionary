@@ -248,24 +248,27 @@ Private Sub Test_01_DctAdd_Performance_KeyIsValue()
     
     On Error GoTo eh
     Dim i       As Long
-    Dim j       As Long: j = 999
+    Dim j       As Long: j = 99
     Dim jStep   As Long: jStep = 2
-    Dim k       As Long: k = 1000
+    Dim k       As Long: k = 100
     Dim kStep   As Long: kStep = -2
     
     BoP ErrSrc(PROC) ' , "added items = ", k
-    Set dctTest = Nothing
+    Set dctTest = New Dictionary
     For i = 1 To j Step jStep
-        DctAdd add_dct:=dctTest, add_key:=i, add_item:=ThisWorkbook, add_seq:=seq_ascending ' by key case sensitive is the default
+        If Not dctTest.Exists(i) _
+        Then DctAdd add_dct:=dctTest, add_key:=i, add_item:=ThisWorkbook, add_seq:=seq_ascending ' by key case sensitive is the default
     Next i
     For i = k To jStep Step kStep
-        DctAdd add_dct:=dctTest, add_key:=i, add_item:=ThisWorkbook, add_seq:=seq_ascending ' by key case sensitive is the default
+        If Not dctTest.Exists(i) _
+        Then DctAdd add_dct:=dctTest, add_key:=i, add_item:=ThisWorkbook, add_seq:=seq_ascending ' by key case sensitive is the default
     Next i
     
     '~~ Add an already existing key, ignored when the item is neither numeric nor a string
     DctAdd add_dct:=dctTest, add_key:=5, add_item:=ThisWorkbook, add_seq:=seq_ascending ' by key case sensitive is the default
     
 xt: EoP ErrSrc(PROC)
+    Set dctTest = Nothing
     Exit Sub
 
 eh: Select Case ErrMsg(ErrSrc(PROC))
@@ -767,8 +770,8 @@ Private Sub Test_99_DctAdd_Performance()
     Test_09_DctAdd_Performance_n 100
     Test_09_DctAdd_Performance_n 500
     Test_09_DctAdd_Performance_n 1000
+    Test_09_DctAdd_Performance_n 1250
     Test_09_DctAdd_Performance_n 1500
-    Test_09_DctAdd_Performance_n 2000
         
 xt: EoP ErrSrc(PROC)
     Exit Sub
