@@ -1,8 +1,8 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} fMsg 
-   ClientHeight    =   11595
-   ClientLeft      =   150
-   ClientTop       =   390
+   ClientHeight    =   14100
+   ClientLeft      =   147
+   ClientTop       =   392
    ClientWidth     =   12390
    OleObjectBlob   =   "fMsg.frx":0000
 End
@@ -14,7 +14,7 @@ Attribute VB_Exposed = False
 
 Option Explicit
 ' -------------------------------------------------------------------------------
-' UserForm fMsg Provides all means for a message with up to 5 separated text
+' UserForm fMsg Provides all means for a message with up to 7 separated text
 '               sections, either proportional- or mono-spaced, with an optional
 '               label, and up to 7 reply buttons.
 '
@@ -247,6 +247,7 @@ Private iSectionsPropSpaced     As Long             ' number of prop. spaced sec
 Private iSectionsMonoSpaced     As Long             ' number of mono-spaced sections setup
 
 Public Property Let ModeLess(ByVal b As Boolean): bModeLess = b:    End Property
+
 Private Sub UserForm_Initialize()
     Const PROC = "UserForm_Initialize"
     
@@ -305,6 +306,9 @@ Private Sub UserForm_Terminate()
     Set dctSectsLabel = Nothing
     Set dctSectsMonoSpaced = Nothing
     Set dctSectsText = Nothing
+    If bModeLess Then
+        Application.EnableEvents = True
+    End If
 End Sub
 
 Public Property Get MonitorIsInitialized() As Boolean: MonitorIsInitialized = Not cllSteps Is Nothing:  End Property
@@ -1469,7 +1473,7 @@ Private Function ErrMsg(ByVal err_source As String, _
     '~~ Obtain error information from the Err object for any argument not provided
     If err_no = 0 Then err_no = Err.Number
     If err_line = 0 Then ErrLine = Erl
-    If err_source = vbNullString Then err_source = Err.Source
+    If err_source = vbNullString Then err_source = Err.source
     If err_dscrptn = vbNullString Then err_dscrptn = Err.Description
     If err_dscrptn = vbNullString Then err_dscrptn = "--- No error description available ---"
     
@@ -1622,6 +1626,8 @@ Private Sub laMsgSection2Label_Click():     OpenClickedLabelItem 2: End Sub
 Private Sub laMsgSection3Label_Click():     OpenClickedLabelItem 3: End Sub
 Private Sub laMsgSection4Label_Click():     OpenClickedLabelItem 4: End Sub
 Private Sub laMsgSection5Label_Click():     OpenClickedLabelItem 5: End Sub
+Private Sub laMsgSection6Label_Click():     OpenClickedLabelItem 6: End Sub
+Private Sub laMsgSection7Label_Click():     OpenClickedLabelItem 7: End Sub
 
 Private Sub laMsgSection1Label_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single):        HandCursorForLink 1:    End Sub
 
@@ -1632,6 +1638,8 @@ Private Sub laMsgSection3Label_MouseMove(ByVal Button As Integer, ByVal Shift As
 Private Sub laMsgSection4Label_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single):        HandCursorForLink 4:    End Sub
 
 Private Sub laMsgSection5Label_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single):        HandCursorForLink 5:    End Sub
+Private Sub laMsgSection6Label_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single):        HandCursorForLink 6:    End Sub
+Private Sub laMsgSection7Label_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single):        HandCursorForLink 7:    End Sub
 
 Private Function Max(ParamArray va() As Variant) As Variant
 ' ----------------------------------------------------------------------------
