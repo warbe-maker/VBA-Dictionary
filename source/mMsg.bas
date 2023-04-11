@@ -117,7 +117,7 @@ Public Type TypeMsgText
 End Type
 
 Public Type TypeMsgSect:    Label As TypeMsgLabel:  Text As TypeMsgText:    End Type
-Public Type TypeMsg:        Section(1 To 7) As TypeMsgSect:                 End Type
+Public Type TypeMsg:        Section(1 To 8) As TypeMsgSect:                 End Type
 
 Public Enum enStartupPosition     ' ---------------------------
     enManual = 0                  ' Used to position the
@@ -150,12 +150,10 @@ Public Property Get ModeLess() As Boolean:          ModeLess = bModeLess:   End 
 Public Property Let ModeLess(ByVal b As Boolean):   bModeLess = b:          End Property
 
 Public Property Get ScreenHeight() As Single
-'    Debug.Print "Screen-Height: " & GetSystemMetrics32(SM_CYVIRTUALSCREEN) & " dpi"
     ConvertPixelsToPoints y_dpi:=GetSystemMetrics32(SM_CYVIRTUALSCREEN), y_pts:=ScreenHeight
 End Property
 
 Public Property Get ScreenWidth() As Single
-'    Debug.Print "Screen-Width: " & GetSystemMetrics32(SM_CXVIRTUALSCREEN) & " dpi"
     ConvertPixelsToPoints x_dpi:=GetSystemMetrics32(SM_CXVIRTUALSCREEN), x_pts:=ScreenWidth
 End Property
 
@@ -243,7 +241,7 @@ Public Sub ButtonAppRun(ByRef bar_dct As Dictionary, _
     For Each v In bar_arguments
         If TypeName(v) = "Error" Then
             Err.Raise Number:=AppErr(1) _
-                    , source:=ErrSrc(PROC) _
+                    , Source:=ErrSrc(PROC) _
                     , Description:="The ParamArray argument (bar_arguments) contains empty elements but empty elements " & _
                                    "are not supported/possible!" & "||" & _
                                    "Application.Run supports only positional but not named arguments. When only some of " & _
@@ -571,11 +569,9 @@ Private Sub ConvertPixelsToPoints(Optional ByVal x_dpi As Single, _
     RetVal = ReleaseDC(0, hDC)
     If Not IsMissing(x_dpi) And Not IsMissing(x_pts) Then
         x_pts = x_dpi * TWIPSPERINCH / 20 / PixelsPerInchX
-'        If Not x_pts = 0 Then Debug.Print x_dpi & " dpi = " & x_pts & " pt"
     End If
     If Not IsMissing(y_dpi) And Not IsMissing(y_pts) Then
         y_pts = y_dpi * TWIPSPERINCH / 20 / PixelsPerInchY
-'        If Not y_pts = 0 Then Debug.Print y_dpi & " dpi = " & y_pts & " pt"
     End If
 End Sub
 
@@ -715,7 +711,7 @@ Public Function ErrMsg(ByVal err_source As String, _
     '~~ Obtain error information from the Err object for any argument not provided
     If err_number = 0 Then err_number = Err.Number
     If err_line = 0 Then err_line = Erl
-    If err_source = vbNullString Then err_source = Err.source
+    If err_source = vbNullString Then err_source = Err.Source
     If err_dscrptn = vbNullString Then err_dscrptn = Err.Description
     If err_dscrptn = vbNullString Then err_dscrptn = "--- No error description available ---"
         
