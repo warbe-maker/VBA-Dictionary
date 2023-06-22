@@ -25,181 +25,16 @@ Private Function AppErr(ByVal app_err_no As Long) As Long
     If app_err_no >= 0 Then AppErr = app_err_no + vbObjectError Else AppErr = Abs(app_err_no - vbObjectError)
 End Function
 
-Private Sub BoC(ByVal boc_id As String, ParamArray b_arguments() As Variant)
-' ------------------------------------------------------------------------------
-' (B)egin-(o)f-(C)ode with id (boc_id) trace. Procedure to be copied as Private
-' into any module potentially using the Common VBA Execution Trace Service. Has
-' no effect when Conditional Compile Argument is 0 or not set at all.
-' Note: The begin id (boc_id) has to be identical with the paired EoC statement.
-' ------------------------------------------------------------------------------
-    Dim s As String: If UBound(b_arguments) >= 0 Then s = Join(b_arguments, ",")
-#If ExecTrace = 1 Then
-    mTrc.BoC boc_id, s
-#End If
-End Sub
-
-Private Sub BoP(ByVal b_proc As String, ParamArray b_arguments() As Variant)
-' ------------------------------------------------------------------------------
-' (B)egin-(o)f-(P)rocedure named (b_proc). Procedure to be copied as Private
-' into any module potentially either using the Common VBA Error Service and/or
-' the Common VBA Execution Trace Service. Has no effect when Conditional Compile
-' Arguments are 0 or not set at all.
-' ------------------------------------------------------------------------------
-    Dim s As String: If UBound(b_arguments) >= 0 Then s = Join(b_arguments, ",")
-#If ErHComp = 1 Then
-    mErH.BoP b_proc, s
-#ElseIf ExecTrace = 1 Then
-    mTrc.BoP b_proc, s
-#End If
-End Sub
-
-Private Sub EoC(ByVal eoc_id As String, ParamArray b_arguments() As Variant)
-' ------------------------------------------------------------------------------
-' (E)nd-(o)f-(C)ode id (eoc_id) trace. Procedure to be copied as Private into
-' any module potentially using the Common VBA Execution Trace Service. Has no
-' effect when the Conditional Compile Argument is 0 or not set at all.
-' Note: The end id (eoc_id) has to be identical with the paired BoC statement.
-' ------------------------------------------------------------------------------
-    Dim s As String: If UBound(b_arguments) >= 0 Then s = Join(b_arguments, ",")
-#If ExecTrace = 1 Then
-    mTrc.BoC eoc_id, s
-#End If
-End Sub
-
-Private Sub EoP(ByVal e_proc As String, _
-       Optional ByVal e_inf As String = vbNullString)
-' ------------------------------------------------------------------------------
-' (E)nd-(o)f-(P)rocedure named (e_proc). Procedure to be copied as Private Sub
-' into any module potentially either using the Common VBA Error Service and/or
-' the Common VBA Execution Trace Service. Has no effect when Conditional Compile
-' Arguments are 0 or not set at all.
-' ------------------------------------------------------------------------------
-#If ErHComp = 1 Then
-    mErH.EoP e_proc
-#ElseIf ExecTrace = 1 Then
-    mTrc.EoP e_proc, e_inf
-#End If
-End Sub
-
-Private Function ErrMsg(ByVal err_source As String, _
-               Optional ByVal err_no As Long = 0, _
-               Optional ByVal err_dscrptn As String = vbNullString, _
-               Optional ByVal err_line As Long = 0) As Variant
-' ------------------------------------------------------------------------------
-' Universal error message display service. Displays a debugging option button
-' when the Conditional Compile Argument 'Debugging = 1' and an optional
-' additional "About the error:" section when information is concatenated with
-' the error message by two vertical bars (||).
-'
-' May be copied as Private Function into any module. Considers the Common VBA
-' Message Service and the Common VBA Error Services as optional components.
-' When neither is installed the error message is displayed by the VBA.MsgBox.
-'
-' Usage: Example with the Conditional Compile Argument 'Debugging = 1'
-'
-'        Private/Public <procedure-name>
-'            Const PROC = "<procedure-name>"
-'
-'            On Error Goto eh
-'            ....
-'        xt: Exit Sub/Function/Property
-'
-'        eh: Select Case ErrMsg(ErrSrc(PROC))
-'               Case vbResume:  Stop: Resume
-'               Case Else:      GoTo xt
-'            End Select
-'        End Sub/Function/Property
-'
-' Note:  The above may seem to be a lot of code but will be a godsend in case
-'        of an error!
-'
-' Uses:
-' - AppErr For programmed application errors (Err.Raise AppErr(n), ....) to
-'          turn tem into negative and in the error mesaage back into a positive
-'          number.
-' - ErrSrc To provide an unambigous procedure name - prefixed by the module name
-'
-' W. Rauschenberger Berlin, Nov 2021
-'
-' See:
-' https://warbe-maker.github.io/vba/common/2022/02/15/Personal-and-public-Common-Components.html
-' ------------------------------------------------------------------------------
-#If ErHComp = 1 Then
-    '~~ When Common VBA Error Services (mErH) is availabel in the VB-Project
-    '~~ (which includes the mMsg component) the mErh.ErrMsg service is invoked.
-    ErrMsg = mErH.ErrMsg(err_source, err_no, err_dscrptn, err_line): GoTo xt
-#ElseIf MsgComp = 1 Then
-    '~~ When (only) the Common Message Service (mMsg, fMsg) is available in the
-    '~~ VB-Project, mMsg.ErrMsg is invoked for the display of the error message.
-    ErrMsg = mMsg.ErrMsg(err_source, err_no, err_dscrptn, err_line): GoTo xt
-#End If
-    '~~ When neither of the Common Component is available in the VB-Project
-    '~~ the error message is displayed by means of the VBA.MsgBox
-    Dim ErrBttns    As Variant
-    Dim ErrAtLine   As String
-    Dim ErrDesc     As String
-    Dim ErrLine     As Long
-    Dim ErrNo       As Long
-    Dim ErrSrc      As String
-    Dim ErrText     As String
-    Dim ErrTitle    As String
-    Dim ErrType     As String
-    Dim ErrAbout    As String
-        
-    '~~ Obtain error information from the Err object for any argument not provided
-    If err_no = 0 Then err_no = Err.Number
-    If err_line = 0 Then ErrLine = Erl
-    If err_source = vbNullString Then err_source = Err.Source
-    If err_dscrptn = vbNullString Then err_dscrptn = Err.Description
-    If err_dscrptn = vbNullString Then err_dscrptn = "--- No error description available ---"
-    
-    '~~ Consider extra information is provided with the error description
-    If InStr(err_dscrptn, "||") <> 0 Then
-        ErrDesc = Split(err_dscrptn, "||")(0)
-        ErrAbout = Split(err_dscrptn, "||")(1)
-    Else
-        ErrDesc = err_dscrptn
-    End If
-    
-    '~~ Determine the type of error
-    Select Case err_no
-        Case Is < 0
-            ErrNo = AppErr(err_no)
-            ErrType = "Application Error "
-        Case Else
-            ErrNo = err_no
-            If err_dscrptn Like "*DAO*" _
-            Or err_dscrptn Like "*ODBC*" _
-            Or err_dscrptn Like "*Oracle*" _
-            Then ErrType = "Database Error " _
-            Else ErrType = "VB Runtime Error "
-    End Select
-    
-    If err_source <> vbNullString Then ErrSrc = " in: """ & err_source & """"   ' assemble ErrSrc from available information"
-    If err_line <> 0 Then ErrAtLine = " at line " & err_line                    ' assemble ErrAtLine from available information
-    ErrTitle = Replace(ErrType & ErrNo & ErrSrc & ErrAtLine, "  ", " ")         ' assemble ErrTitle from available information
-       
-    ErrText = "Error: " & vbLf & ErrDesc & vbLf & vbLf & "Source: " & vbLf & err_source & ErrAtLine
-    If ErrAbout <> vbNullString Then ErrText = ErrText & vbLf & vbLf & "About: " & vbLf & ErrAbout
-    
-#If Debugging Then
-    ErrBttns = vbYesNo
-    ErrText = ErrText & vbLf & vbLf & "Debugging:" & vbLf & "Yes    = Resume Error Line" & vbLf & "No     = Terminate"
-#Else
-    ErrBttns = vbCritical
-#End If
-    ErrMsg = MsgBox(Title:=ErrTitle, Prompt:=ErrText, Buttons:=ErrBttns)
-
-xt:
-End Function
-
 Private Function ErrSrc(ByVal sProc As String) As String
     ErrSrc = "mDctTest." & sProc
 End Function
 
 Public Sub Test_00_Regression()
 ' ------------------------------------------------------------------------------
-' Attention! This Regression tes takes about 30 seconds due to the included
+' Requires the Cond. Comp. Args.:
+' Debugging = 1 : ErHComp = 1 : MsgComp = 1 : XcTrc_mTrc = 1
+'
+' Attention! This Regression test may takes up to 30 seconds due to the included
 '            performance test which writes the results to the "Test" sheet.
 ' ------------------------------------------------------------------------------
     Const PROC = "Test_Regression"
@@ -208,10 +43,11 @@ Public Sub Test_00_Regression()
     
     '~~ Initialization of a new Trace Log File for this Regression test
     '~~ ! must be done prior the first BoP !
-    mTrc.LogFile = Replace(ThisWorkbook.FullName, ThisWorkbook.Name, "Regression Test.log")
-    mTrc.LogTitle = "Regression Test module mDct"
+    mTrc.FileName = "RegessionTest.ExecTrace.log"
+    mTrc.Title = "Regression Test module mDct"
+    mTrc.NewFile
     
-    BoP ErrSrc(PROC)
+    mBasic.BoP ErrSrc(PROC)
     
     mErH.Regression = True ' prevent display of asserted errors
     Set dctTest = Nothing
@@ -228,11 +64,11 @@ Public Sub Test_00_Regression()
     Test_99_DctAdd_Performance
     
 xt: mErH.Regression = False
-    EoP ErrSrc(PROC)
+    mBasic.EoP ErrSrc(PROC)
     mTrc.Dsply
     Exit Sub
 
-eh: Select Case ErrMsg(ErrSrc(PROC))
+eh: Select Case mBasic.ErrMsg(ErrSrc(PROC))
         Case vbResume:  Stop: Resume
         Case Else:      GoTo xt
     End Select
@@ -253,7 +89,7 @@ Private Sub Test_01_DctAdd_Performance_KeyIsValue()
     Dim k       As Long: k = 100
     Dim kStep   As Long: kStep = -2
     
-    BoP ErrSrc(PROC) ' , "added items = ", k
+    mBasic.BoP ErrSrc(PROC) ' , "added items = ", k
     Set dctTest = New Dictionary
     For i = 1 To j Step jStep
         If Not dctTest.Exists(i) _
@@ -267,11 +103,11 @@ Private Sub Test_01_DctAdd_Performance_KeyIsValue()
     '~~ Add an already existing key, ignored when the item is neither numeric nor a string
     DctAdd add_dct:=dctTest, add_key:=5, add_item:=ThisWorkbook, add_seq:=seq_ascending ' by key case sensitive is the default
     
-xt: EoP ErrSrc(PROC)
+xt: mBasic.EoP ErrSrc(PROC)
     Set dctTest = Nothing
     Exit Sub
 
-eh: Select Case ErrMsg(ErrSrc(PROC))
+eh: Select Case mBasic.ErrMsg(ErrSrc(PROC))
         Case vbResume:  Stop: Resume
         Case Else:      GoTo xt
     End Select
@@ -290,7 +126,7 @@ Private Sub Test_02_DctAdd_KeyIsObjectWithNameProperty()
     Dim i   As Long
     Dim vbc As VBComponent
     
-    BoP ErrSrc(PROC)
+    mBasic.BoP ErrSrc(PROC)
     Set dctTest = Nothing
     For Each vbc In ThisWorkbook.VBProject.VBComponents
         DctAdd add_dct:=dctTest, add_key:=vbc, add_item:=vbc.Name, add_seq:=seq_ascending ' by key case sensitive is the default
@@ -306,10 +142,10 @@ Private Sub Test_02_DctAdd_KeyIsObjectWithNameProperty()
     Debug.Assert dctTest.Items()(0) = "fMsg"
     Debug.Assert dctTest.Items()(dctTest.Count - 1) = "wsDct"
     
-xt: EoP ErrSrc(PROC)
+xt: mBasic.EoP ErrSrc(PROC)
     Exit Sub
 
-eh: Select Case ErrMsg(ErrSrc(PROC))
+eh: Select Case mBasic.ErrMsg(ErrSrc(PROC))
         Case vbResume:  Stop: Resume
         Case Else:      GoTo xt
     End Select
@@ -326,7 +162,7 @@ Private Sub Test_03_DctAdd_ItemIsObjectWithNameProperty()
     Dim i   As Long
     Dim vbc As VBComponent
     
-    BoP ErrSrc(PROC)
+    mBasic.BoP ErrSrc(PROC)
     Set dctTest = Nothing
     For Each vbc In ThisWorkbook.VBProject.VBComponents
         DctAdd add_dct:=dctTest, add_key:=vbc.Name, add_item:=vbc, add_order:=order_byitem, add_seq:=seq_ascending
@@ -343,10 +179,10 @@ Private Sub Test_03_DctAdd_ItemIsObjectWithNameProperty()
     Debug.Assert dctTest.Items()(0).Name = "fMsg"
     Debug.Assert dctTest.Items()(dctTest.Count - 1).Name = "wsDct"
         
-xt: EoP ErrSrc(PROC)
+xt: mBasic.EoP ErrSrc(PROC)
     Exit Sub
 
-eh: Select Case ErrMsg(ErrSrc(PROC))
+eh: Select Case mBasic.ErrMsg(ErrSrc(PROC))
         Case vbResume:  Stop: Resume
         Case Else:      GoTo xt
     End Select
@@ -362,7 +198,7 @@ Private Sub Test_04_DctAdd_InsertKeyBefore()
     Dim vbc_second As VBComponent
     Dim vbc_first As VBComponent
     
-    BoP ErrSrc(PROC)
+    mBasic.BoP ErrSrc(PROC)
     
     '~~ Preparation
     Test_02_DctAdd_KeyIsObjectWithNameProperty
@@ -379,10 +215,10 @@ Private Sub Test_04_DctAdd_InsertKeyBefore()
     Debug.Assert dctTest.Keys()(0).Name = "fMsg"
     Debug.Assert dctTest.Keys()(1).Name = "mBasic"
         
-xt: EoP ErrSrc(PROC)
+xt: mBasic.EoP ErrSrc(PROC)
     Exit Sub
 
-eh: Select Case ErrMsg(ErrSrc(PROC))
+eh: Select Case mBasic.ErrMsg(ErrSrc(PROC))
         Case vbResume:  Stop: Resume
         Case Else:      GoTo xt
     End Select
@@ -398,7 +234,7 @@ Private Sub Test_05_DctAdd_InsertKeyAfter()
     Dim vbc_second As VBComponent
     Dim vbc_first As VBComponent
     
-    BoP ErrSrc(PROC)
+    mBasic.BoP ErrSrc(PROC)
     
     '~~ Preparation
     Test_02_DctAdd_KeyIsObjectWithNameProperty
@@ -415,10 +251,10 @@ Private Sub Test_05_DctAdd_InsertKeyAfter()
     Debug.Assert dctTest.Keys()(0).Name = "fMsg"
     Debug.Assert dctTest.Keys()(1).Name = "mBasic"
             
-xt: EoP ErrSrc(PROC)
+xt: mBasic.EoP ErrSrc(PROC)
     Exit Sub
 
-eh: Select Case ErrMsg(ErrSrc(PROC))
+eh: Select Case mBasic.ErrMsg(ErrSrc(PROC))
         Case vbResume:  Stop: Resume
         Case Else:      GoTo xt
     End Select
@@ -434,7 +270,7 @@ Private Sub Test_06_DctAdd_InsertItemBefore()
     Dim vbc_second As VBComponent
     Dim vbc_first As VBComponent
     
-    BoP ErrSrc(PROC)
+    mBasic.BoP ErrSrc(PROC)
     
     '~~ Preparation
     Test_03_DctAdd_ItemIsObjectWithNameProperty
@@ -451,10 +287,10 @@ Private Sub Test_06_DctAdd_InsertItemBefore()
     Debug.Assert dctTest.Items()(0).Name = "fMsg"
     Debug.Assert dctTest.Items()(1).Name = "mBasic"
         
-xt: EoP ErrSrc(PROC)
+xt: mBasic.EoP ErrSrc(PROC)
     Exit Sub
 
-eh: Select Case ErrMsg(ErrSrc(PROC))
+eh: Select Case mBasic.ErrMsg(ErrSrc(PROC))
         Case vbResume:  Stop: Resume
         Case Else:      GoTo xt
     End Select
@@ -470,7 +306,7 @@ Private Sub Test_07_DctAdd_InsertItemAfter()
     Dim vbc_second As VBComponent
     Dim vbc_first As VBComponent
     
-    BoP ErrSrc(PROC)
+    mBasic.BoP ErrSrc(PROC)
     
     '~~ Preparation
     Test_03_DctAdd_ItemIsObjectWithNameProperty
@@ -487,10 +323,10 @@ Private Sub Test_07_DctAdd_InsertItemAfter()
     Debug.Assert dctTest.Items()(0).Name = vbc_second.Name
     Debug.Assert dctTest.Items()(1).Name = vbc_first.Name
         
-xt: EoP ErrSrc(PROC)
+xt: mBasic.EoP ErrSrc(PROC)
     Exit Sub
 
-eh: Select Case ErrMsg(ErrSrc(PROC))
+eh: Select Case mBasic.ErrMsg(ErrSrc(PROC))
         Case vbResume:  Stop: Resume
         Case Else:      GoTo xt
     End Select
@@ -504,7 +340,7 @@ Private Sub Test_08_DctAdd_NumKey()
     
     On Error GoTo eh
     
-    BoP ErrSrc(PROC)
+    mBasic.BoP ErrSrc(PROC)
     Set dctTest = Nothing
     
     DctAdd dctTest, 2, 5, add_seq:=seq_ascending
@@ -515,10 +351,10 @@ Private Sub Test_08_DctAdd_NumKey()
     Debug.Assert dctTest.Keys()(0) = 2
     Debug.Assert dctTest.Keys()(dctTest.Count - 1) = 5
         
-xt: EoP ErrSrc(PROC)
+xt: mBasic.EoP ErrSrc(PROC)
     Exit Sub
 
-eh: Select Case ErrMsg(ErrSrc(PROC))
+eh: Select Case mBasic.ErrMsg(ErrSrc(PROC))
         Case vbResume:  Stop: Resume
         Case Else:      GoTo xt
     End Select
@@ -533,7 +369,7 @@ Private Sub Test_09_DctAdd_Performance_n(ByVal lAdds As Long)
     On Error GoTo eh
     Dim i As Long
     
-    BoP ErrSrc(PROC), "items added ordered = ", lAdds
+    mBasic.BoP ErrSrc(PROC), "items added ordered = " & lAdds
     Set dctTest = Nothing
     For i = 1 To lAdds - 1 Step 2
         DctAdd add_dct:=dctTest, add_key:=i, add_item:=ThisWorkbook, add_seq:=seq_ascending ' by key case sensitive is the default
@@ -542,10 +378,10 @@ Private Sub Test_09_DctAdd_Performance_n(ByVal lAdds As Long)
         DctAdd add_dct:=dctTest, add_key:=i, add_item:=ThisWorkbook, add_seq:=seq_ascending ' by key case sensitive is the default
     Next i
         
-xt: EoP ErrSrc(PROC)
+xt: mBasic.EoP ErrSrc(PROC)
     Exit Sub
 
-eh: Select Case ErrMsg(ErrSrc(PROC))
+eh: Select Case mBasic.ErrMsg(ErrSrc(PROC))
         Case vbResume:  Stop: Resume
         Case Else:      GoTo xt
     End Select
@@ -559,7 +395,7 @@ Private Sub Test_10_DctAdd_AddDuplicate_Item()
     Const PROC = "Test_10_DctAdd_AddDuplicate_Item"
 
     On Error GoTo eh
-    BoP ErrSrc(PROC)
+    mBasic.BoP ErrSrc(PROC)
     
     Set dctTest = Nothing
     DctAdd add_dct:=dctTest, add_key:="A", add_item:=60, add_order:=order_byitem, add_seq:=seq_ascending
@@ -581,10 +417,10 @@ Private Sub Test_10_DctAdd_AddDuplicate_Item()
 '    Test_DisplayResult dctTest, "staywithfirst=True"
     Debug.Assert dctTest.Count = 5
     
-xt: EoP ErrSrc(PROC)
+xt: mBasic.EoP ErrSrc(PROC)
     Exit Sub
 
-eh: Select Case ErrMsg(ErrSrc(PROC))
+eh: Select Case mBasic.ErrMsg(ErrSrc(PROC))
         Case vbResume:  Stop: Resume
         Case Else:      GoTo xt
     End Select
@@ -601,7 +437,7 @@ Private Sub Test_20_DctDiffers_InKeysAsObject()
     Dim dct2 As Dictionary
     Dim vbc  As VBComponent
     
-    BoP ErrSrc(PROC)
+    mBasic.BoP ErrSrc(PROC)
     Set dct1 = Nothing
     Set dct2 = Nothing
     For Each vbc In ThisWorkbook.VBProject.VBComponents
@@ -622,10 +458,10 @@ Private Sub Test_20_DctDiffers_InKeysAsObject()
     Set dct1 = Nothing
     Set dct2 = Nothing
         
-xt: EoP ErrSrc(PROC)
+xt: mBasic.EoP ErrSrc(PROC)
     Exit Sub
 
-eh: Select Case ErrMsg(ErrSrc(PROC))
+eh: Select Case mBasic.ErrMsg(ErrSrc(PROC))
         Case vbResume:  Stop: Resume
         Case Else:      GoTo xt
     End Select
@@ -642,7 +478,7 @@ Private Sub Test_21_DctDiffers_InItemsAsObject()
     Dim dct2 As Dictionary
     Dim vbc  As VBComponent
     
-    BoP ErrSrc(PROC)
+    mBasic.BoP ErrSrc(PROC)
     Set dct1 = Nothing
     Set dct2 = Nothing
     For Each vbc In ThisWorkbook.VBProject.VBComponents
@@ -663,10 +499,10 @@ Private Sub Test_21_DctDiffers_InItemsAsObject()
     Set dct1 = Nothing
     Set dct2 = Nothing
         
-xt: EoP ErrSrc(PROC)
+xt: mBasic.EoP ErrSrc(PROC)
     Exit Sub
 
-eh: Select Case ErrMsg(ErrSrc(PROC))
+eh: Select Case mBasic.ErrMsg(ErrSrc(PROC))
         Case vbResume:  Stop: Resume
         Case Else:      GoTo xt
     End Select
@@ -685,7 +521,7 @@ Private Sub Test_22_DctDiffers_InItemsAsString()
     Dim v       As Variant
     Dim i       As Long
     
-    BoP ErrSrc(PROC)
+    mBasic.BoP ErrSrc(PROC)
     
     '~~ Prepare
     Set dct1 = Nothing
@@ -748,10 +584,10 @@ Private Sub Test_22_DctDiffers_InItemsAsString()
     Set dct1 = Nothing
     Set dct2 = Nothing
         
-xt: EoP ErrSrc(PROC)
+xt: mBasic.EoP ErrSrc(PROC)
     Exit Sub
 
-eh: Select Case ErrMsg(ErrSrc(PROC))
+eh: Select Case mBasic.ErrMsg(ErrSrc(PROC))
         Case vbResume:  Stop: Resume
         Case Else:      GoTo xt
     End Select
@@ -765,7 +601,7 @@ Private Sub Test_99_DctAdd_Performance()
     
     On Error GoTo eh
     
-    BoP ErrSrc(PROC)
+    mBasic.BoP ErrSrc(PROC)
     
     Test_09_DctAdd_Performance_n 100
     Test_09_DctAdd_Performance_n 500
@@ -773,10 +609,10 @@ Private Sub Test_99_DctAdd_Performance()
     Test_09_DctAdd_Performance_n 1250
     Test_09_DctAdd_Performance_n 1500
         
-xt: EoP ErrSrc(PROC)
+xt: mBasic.EoP ErrSrc(PROC)
     Exit Sub
 
-eh: Select Case ErrMsg(ErrSrc(PROC))
+eh: Select Case mBasic.ErrMsg(ErrSrc(PROC))
         Case vbResume:  Stop: Resume
         Case Else:      GoTo xt
     End Select
@@ -813,7 +649,7 @@ Public Sub Test_DisplayResult(ByVal dct As Dictionary, _
           
 xt: Exit Sub
 
-eh: Select Case ErrMsg(ErrSrc(PROC))
+eh: Select Case mBasic.ErrMsg(ErrSrc(PROC))
         Case vbResume:  Stop: Resume
         Case Else:      GoTo xt
     End Select
